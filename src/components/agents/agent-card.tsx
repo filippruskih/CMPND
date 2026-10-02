@@ -27,6 +27,14 @@ import {
 } from "@/components/ui/select";
 import { IconBadge, type IconBadgeColor } from "@/components/icon-badge";
 import { cn } from "@/lib/utils";
+import {
+  utcToLocal,
+  localToUtc,
+  utcHourToLocalHour,
+  localHourToUtcHour,
+  deviceTimezoneLabel,
+} from "@/lib/schedule-time";
+import { useIsMounted } from "@/lib/use-is-mounted";
 
 // Same fixed categorical order as the rest of the app — each agent keeps
 // its color identity everywhere it's shown.
@@ -105,7 +113,9 @@ function relativeTime(iso: string): string {
 }
 
 function hourLabel(hour: number): string {
-  return `${String(hour).padStart(2, "0")}:00 UTC`;
+  const period = hour < 12 ? "AM" : "PM";
+  const twelveHour = hour % 12 === 0 ? 12 : hour % 12;
+  return `${twelveHour}:00 ${period}`;
 }
 
 export function AgentCard({ initial }: { initial: AgentData }) {
@@ -113,6 +123,13 @@ export function AgentCard({ initial }: { initial: AgentData }) {
   const [expanded, setExpanded] = useState(false);
   const [triggering, setTriggering] = useState(false);
   const [savingSchedule, setSavingSchedule] = useState(false);
+  // Local-time conversion depends on the browser's timezone, which the
+  // server doesn't know at SSR time - computing it straight in render
+  // would make the server-rendered HTML and the client's first render
+  // disagree. Only convert after mount, once this is genuinely running on
+  // the viewer's device; the UTC values render first (matching SSR) and
+  // get replaced a frame later.
+  const mounted = useIsMounted();
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const latestRun = agent.runs[0] ?? null;
@@ -164,6 +181,27 @@ export function AgentCard({ initial }: { initial: AgentData }) {
 
   const { icon, color } = AGENT_ICONS[agent.key] ?? { icon: BarChart3, color: "blue" };
   const isOff = agent.frequency === "off";
+
+  // For weekly, hour and day-of-week must be converted together (the day
+  // can shift near midnight). For daily/monthly, only the hour matters -
+  // dayOfMonth is intentionally left unconverted (see schedule-time.ts).
+  const weeklyLocal = mounted ? utcToLocal(agent.hour, agent.dayOfWeek) : { hour: agent.hour, dayOfWeek: agent.dayOfWeek };
+  const simpleLocalHour = mounted ? utcHourToLocalHour(agent.hour) : agent.hour;
+  const displayedHour = agent.frequency === "weekly" ? weeklyLocal.hour : simpleLocalHour;
+
+  function handleHourChange(pickedLocalHour: number) {
+    if (agent.frequency === "weekly") {
+      const utc = localToUtc(pickedLocalHour, weeklyLocal.dayOfWeek);
+      updateSchedule({ hour: utc.hour, dayOfWeek: utc.dayOfWeek });
+    } else {
+      updateSchedule({ hour: localHourToUtcHour(pickedLocalHour) });
+    }
+  }
+
+  function handleDayOfWeekChange(pickedLocalDay: number) {
+    const utc = localToUtc(weeklyLocal.hour, pickedLocalDay);
+    updateSchedule({ hour: utc.hour, dayOfWeek: utc.dayOfWeek });
+  }
 
   return (
     <Card>
@@ -217,8 +255,8 @@ export function AgentCard({ initial }: { initial: AgentData }) {
             <>
               <span className="text-xs text-muted-foreground">at</span>
               <Select
-                value={String(agent.hour)}
-                onValueChange={(v) => updateSchedule({ hour: Number(v) })}
+                value={String(displayedHour)}
+                onValueChange={(v) => handleHourChange(Number(v))}
                 disabled={savingSchedule}
               >
                 <SelectTrigger size="sm" className="w-28">
@@ -232,6 +270,9 @@ export function AgentCard({ initial }: { initial: AgentData }) {
                   ))}
                 </SelectContent>
               </Select>
+              {mounted && (
+                <span className="text-xs text-muted-foreground">{deviceTimezoneLabel()}</span>
+              )}
             </>
           )}
 
@@ -239,8 +280,8 @@ export function AgentCard({ initial }: { initial: AgentData }) {
             <>
               <span className="text-xs text-muted-foreground">on</span>
               <Select
-                value={String(agent.dayOfWeek)}
-                onValueChange={(v) => updateSchedule({ dayOfWeek: Number(v) })}
+                value={String(weeklyLocal.dayOfWeek)}
+                onValueChange={(v) => handleDayOfWeekChange(Number(v))}
                 disabled={savingSchedule}
               >
                 <SelectTrigger size="sm" className="w-32">
