@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { anthropic, requireAnthropicKey, AGENT_MODEL, NO_EM_DASH_INSTRUCTION } from "@/lib/anthropic";
+import { getAgentSettings, parseExcludedTopics } from "@/lib/agent-settings";
 import type { AgentContext } from "@/lib/agents/registry";
 import { AgentSkip } from "@/lib/agents/errors";
 
@@ -61,6 +62,9 @@ export async function runPlanningAgent(ctx: AgentContext): Promise<string> {
     throw new AgentSkip("Skipped: no ideas to plan from yet");
   }
 
+  const settings = await getAgentSettings();
+  const excludedTopics = parseExcludedTopics(settings.excludedTopics);
+
   requireAnthropicKey();
   await ctx.log("Turning today's ideas into 3 ready-to-film hook + script options, plus a post idea…");
 
@@ -72,7 +76,11 @@ export async function runPlanningAgent(ctx: AgentContext): Promise<string> {
     messages: [
       {
         role: "user",
-        content: `Here are candidate video ideas for a creator's next Instagram Reel:\n\n${ideaRun.outputSummary}\n\nPick exactly 3 of the strongest, most distinct ideas from these candidates (or close variations of them) and turn each into its own concrete, ready-to-film hook and script for today. The "plans" array in your response must contain exactly 3 items - not fewer, not more. Give the creator genuine variety to choose from - not three versions of the same idea.\n\nSeparately, also suggest one picture or carousel post idea for today (not a reel) - grounded in the same trends/niche context, but a concept suited to a still photo or a short carousel rather than video. Give a concrete concept and a ready-to-post caption.\n\n${NO_EM_DASH_INSTRUCTION}`,
+        content: `Here are candidate video ideas for a creator's next Instagram Reel:\n\n${ideaRun.outputSummary}\n\nPick exactly 3 of the strongest, most distinct ideas from these candidates (or close variations of them) and turn each into its own concrete, ready-to-film hook and script for today. The "plans" array in your response must contain exactly 3 items - not fewer, not more. Give the creator genuine variety to choose from - not three versions of the same idea.\n\nSeparately, also suggest one picture or carousel post idea for today (not a reel) - grounded in the same trends/niche context, but a concept suited to a still photo or a short carousel rather than video. Give a concrete concept and a ready-to-post caption.\n\n${
+          excludedTopics.length > 0
+            ? `This creator never wants content about the following - do not suggest anything touching these, even tangentially:\n${excludedTopics.map((t) => `- ${t}`).join("\n")}\n\n`
+            : ""
+        }${NO_EM_DASH_INSTRUCTION}`,
       },
     ],
   });

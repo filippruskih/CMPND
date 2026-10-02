@@ -23,3 +23,52 @@ export async function GET(_request: Request, { params }: { params: Promise<{ key
 
   return NextResponse.json(definition);
 }
+
+const VALID_FREQUENCIES = new Set(["off", "daily", "weekly", "monthly"]);
+
+export async function PATCH(request: Request, { params }: { params: Promise<{ key: string }> }) {
+  const { key } = await params;
+  const body = await request.json();
+
+  const data: {
+    frequency?: string;
+    hour?: number;
+    dayOfWeek?: number;
+    dayOfMonth?: number;
+  } = {};
+
+  if ("frequency" in body) {
+    if (!VALID_FREQUENCIES.has(body.frequency)) {
+      return NextResponse.json({ error: "Invalid frequency" }, { status: 400 });
+    }
+    data.frequency = body.frequency;
+  }
+  if ("hour" in body) {
+    const hour = Number(body.hour);
+    if (!Number.isInteger(hour) || hour < 0 || hour > 23) {
+      return NextResponse.json({ error: "hour must be 0-23" }, { status: 400 });
+    }
+    data.hour = hour;
+  }
+  if ("dayOfWeek" in body) {
+    const dayOfWeek = Number(body.dayOfWeek);
+    if (!Number.isInteger(dayOfWeek) || dayOfWeek < 0 || dayOfWeek > 6) {
+      return NextResponse.json({ error: "dayOfWeek must be 0-6" }, { status: 400 });
+    }
+    data.dayOfWeek = dayOfWeek;
+  }
+  if ("dayOfMonth" in body) {
+    const dayOfMonth = Number(body.dayOfMonth);
+    if (!Number.isInteger(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 28) {
+      return NextResponse.json({ error: "dayOfMonth must be 1-28" }, { status: 400 });
+    }
+    data.dayOfMonth = dayOfMonth;
+  }
+
+  if (Object.keys(data).length === 0) {
+    return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+  }
+
+  const definition = await db.agentDefinition.update({ where: { key }, data });
+  return NextResponse.json(definition);
+}

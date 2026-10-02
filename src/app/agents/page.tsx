@@ -1,7 +1,9 @@
 import { Bot } from "lucide-react";
 import { db } from "@/lib/db";
 import { ensureAgentDefinitions } from "@/lib/agents/runner";
+import { getAgentSettings } from "@/lib/agent-settings";
 import { AgentCard } from "@/components/agents/agent-card";
+import { ExcludedTopicsCard } from "@/components/agents/excluded-topics-card";
 import { PageHeader } from "@/components/page-header";
 
 export const dynamic = "force-dynamic";
@@ -9,16 +11,19 @@ export const dynamic = "force-dynamic";
 export default async function AgentsPage() {
   await ensureAgentDefinitions();
 
-  const definitions = await db.agentDefinition.findMany({
-    orderBy: { createdAt: "asc" },
-    include: {
-      runs: {
-        orderBy: { startedAt: "desc" },
-        take: 1,
-        include: { logs: { orderBy: { timestamp: "asc" } } },
+  const [definitions, settings] = await Promise.all([
+    db.agentDefinition.findMany({
+      orderBy: { createdAt: "asc" },
+      include: {
+        runs: {
+          orderBy: { startedAt: "desc" },
+          take: 1,
+          include: { logs: { orderBy: { timestamp: "asc" } } },
+        },
       },
-    },
-  });
+    }),
+    getAgentSettings(),
+  ]);
 
   return (
     <div className="flex flex-1 flex-col gap-4">
@@ -29,6 +34,8 @@ export default async function AgentsPage() {
         description="Analytics, Trend, Idea, Planning, and DM agents - live status and activity log."
       />
 
+      <ExcludedTopicsCard initial={settings.excludedTopics ?? ""} />
+
       <div className="grid gap-4 md:grid-cols-2">
         {definitions.map((definition) => (
           <AgentCard
@@ -37,8 +44,10 @@ export default async function AgentsPage() {
               key: definition.key,
               name: definition.name,
               description: definition.description,
-              schedule: definition.schedule,
-              enabled: definition.enabled,
+              frequency: definition.frequency,
+              hour: definition.hour,
+              dayOfWeek: definition.dayOfWeek,
+              dayOfMonth: definition.dayOfMonth,
               runs: definition.runs.map((run) => ({
                 id: run.id,
                 status: run.status,

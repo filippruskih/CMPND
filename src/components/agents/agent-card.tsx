@@ -18,6 +18,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { IconBadge, type IconBadgeColor } from "@/components/icon-badge";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +38,8 @@ const AGENT_ICONS: Record<string, { icon: typeof BarChart3; color: IconBadgeColo
   planning: { icon: CalendarClock, color: "yellow" },
   dm: { icon: MessageCircle, color: "magenta" },
 };
+
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 interface LogEntry {
   id: string;
@@ -52,8 +61,10 @@ interface AgentData {
   key: string;
   name: string;
   description: string;
-  schedule: string;
-  enabled: boolean;
+  frequency: string;
+  hour: number;
+  dayOfWeek: number;
+  dayOfMonth: number;
   runs: RunSummary[];
 }
 
@@ -93,10 +104,15 @@ function relativeTime(iso: string): string {
   return `${Math.round(hours / 24)}d ago`;
 }
 
+function hourLabel(hour: number): string {
+  return `${String(hour).padStart(2, "0")}:00 UTC`;
+}
+
 export function AgentCard({ initial }: { initial: AgentData }) {
   const [agent, setAgent] = useState(initial);
   const [expanded, setExpanded] = useState(false);
   const [triggering, setTriggering] = useState(false);
+  const [savingSchedule, setSavingSchedule] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const latestRun = agent.runs[0] ?? null;
@@ -132,7 +148,22 @@ export function AgentCard({ initial }: { initial: AgentData }) {
     }
   }
 
+  async function updateSchedule(patch: Record<string, number | string>) {
+    setSavingSchedule(true);
+    setAgent((a) => ({ ...a, ...patch }));
+    try {
+      await fetch(`/api/agents/${agent.key}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+    } finally {
+      setSavingSchedule(false);
+    }
+  }
+
   const { icon, color } = AGENT_ICONS[agent.key] ?? { icon: BarChart3, color: "blue" };
+  const isOff = agent.frequency === "off";
 
   return (
     <Card>
@@ -151,11 +182,7 @@ export function AgentCard({ initial }: { initial: AgentData }) {
       <CardContent className="flex flex-col gap-3">
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
-            {latestRun
-              ? `Last run ${relativeTime(latestRun.startedAt)}`
-              : agent.enabled
-                ? "Not run yet"
-                : "Disabled"}
+            {latestRun ? `Last run ${relativeTime(latestRun.startedAt)}` : isOff ? "Scheduling off" : "Not run yet"}
           </span>
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="sm" onClick={() => setExpanded((v) => !v)}>
@@ -167,6 +194,90 @@ export function AgentCard({ initial }: { initial: AgentData }) {
               Run now
             </Button>
           </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 border-t pt-3">
+          <Select
+            value={agent.frequency}
+            onValueChange={(v) => updateSchedule({ frequency: v })}
+            disabled={savingSchedule}
+          >
+            <SelectTrigger size="sm" className="w-28">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="off">Off</SelectItem>
+              <SelectItem value="daily">Daily</SelectItem>
+              <SelectItem value="weekly">Weekly</SelectItem>
+              <SelectItem value="monthly">Monthly</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {!isOff && (
+            <>
+              <span className="text-xs text-muted-foreground">at</span>
+              <Select
+                value={String(agent.hour)}
+                onValueChange={(v) => updateSchedule({ hour: Number(v) })}
+                disabled={savingSchedule}
+              >
+                <SelectTrigger size="sm" className="w-28">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 24 }).map((_, h) => (
+                    <SelectItem key={h} value={String(h)}>
+                      {hourLabel(h)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </>
+          )}
+
+          {agent.frequency === "weekly" && (
+            <>
+              <span className="text-xs text-muted-foreground">on</span>
+              <Select
+                value={String(agent.dayOfWeek)}
+                onValueChange={(v) => updateSchedule({ dayOfWeek: Number(v) })}
+                disabled={savingSchedule}
+              >
+                <SelectTrigger size="sm" className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {DAY_NAMES.map((day, i) => (
+                    <SelectItem key={day} value={String(i)}>
+                      {day}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </>
+          )}
+
+          {agent.frequency === "monthly" && (
+            <>
+              <span className="text-xs text-muted-foreground">on day</span>
+              <Select
+                value={String(agent.dayOfMonth)}
+                onValueChange={(v) => updateSchedule({ dayOfMonth: Number(v) })}
+                disabled={savingSchedule}
+              >
+                <SelectTrigger size="sm" className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 28 }).map((_, i) => (
+                    <SelectItem key={i} value={String(i + 1)}>
+                      {i + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </>
+          )}
         </div>
 
         {expanded && (

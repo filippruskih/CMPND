@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
 import { AGENT_REGISTRY, type AgentDefinitionConfig } from "./registry";
 import { AgentSkip } from "./errors";
-import type { AgentDefinition } from "@/generated/prisma/client";
 
-// Keeps AgentDefinition rows in sync with the registry. `enabled` is
-// user-controlled state and is intentionally never overwritten here.
+// Keeps AgentDefinition rows in sync with the registry. frequency/hour/
+// dayOfWeek/dayOfMonth are user-controlled state (set from defaults only
+// on first creation) and are intentionally never overwritten here.
 export async function ensureAgentDefinitions() {
   for (const config of Object.values(AGENT_REGISTRY)) {
     await db.agentDefinition.upsert({
@@ -13,35 +13,21 @@ export async function ensureAgentDefinitions() {
         key: config.key,
         name: config.name,
         description: config.description,
-        schedule: config.schedule,
-        enabled: config.enabledByDefault,
+        frequency: config.defaultFrequency,
+        hour: config.defaultHour,
       },
       update: {
         name: config.name,
         description: config.description,
-        schedule: config.schedule,
       },
     });
   }
 }
 
-async function executeAgentRun(
-  runId: string,
-  definition: AgentDefinition,
-  config: AgentDefinitionConfig
-) {
+async function executeAgentRun(runId: string, config: AgentDefinitionConfig) {
   const log = async (message: string, level: "info" | "warn" | "error" = "info") => {
     await db.agentLogEntry.create({ data: { runId, level, message } });
   };
-
-  if (!definition.enabled) {
-    await log("Agent is disabled - skipping run.", "warn");
-    await db.agentRun.update({
-      where: { id: runId },
-      data: { status: "skipped", finishedAt: new Date(), outputSummary: "Disabled" },
-    });
-    return;
-  }
 
   try {
     const summary = await config.run({ runId, log });
@@ -81,7 +67,7 @@ export async function triggerAgentRun(key: string): Promise<string> {
     data: { agentId: definition.id, status: "running" },
   });
 
-  executeAgentRun(run.id, definition, config).catch((error) => {
+  executeAgentRun(run.id, config).catch((error) => {
     console.error(`[agents] ${key} run ${run.id} crashed`, error);
   });
 

@@ -97,10 +97,26 @@ model AgentDefinition {
   key         String     @unique
   name        String
   description String
-  schedule    String
-  enabled     Boolean    @default(true)
+  // "off" | "daily" | "weekly" | "monthly" - "off" only stops the
+  // scheduler from auto-triggering; manually hitting "Run now" always
+  // works regardless of this value. hour is UTC, 0-23. dayOfWeek (0=Sun)
+  // only applies when frequency="weekly"; dayOfMonth (1-28) only applies
+  // when frequency="monthly".
+  frequency   String     @default("daily")
+  hour        Int        @default(6)
+  dayOfWeek   Int        @default(1)
+  dayOfMonth  Int        @default(1)
   createdAt   DateTime   @default(now())
   runs        AgentRun[]
+}
+
+// Single-row settings that shape what the Idea/Planning agents suggest.
+model AgentSettings {
+  id             String   @id @default(cuid())
+  // Free text (one topic/thing per line) the creator never wants
+  // suggested - fed into the Idea and Planning agent prompts verbatim.
+  excludedTopics String?
+  updatedAt      DateTime @updatedAt
 }
 
 model AgentRun {

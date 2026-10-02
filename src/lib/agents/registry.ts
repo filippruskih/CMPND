@@ -14,8 +14,13 @@ export interface AgentDefinitionConfig {
   key: string;
   name: string;
   description: string;
-  schedule: string;
-  enabledByDefault: boolean;
+  // Only used to seed a brand-new AgentDefinition row on first boot -
+  // frequency/hour are user-controlled from there on and never
+  // overwritten (see ensureAgentDefinitions). Staggered an hour apart so
+  // each agent's output is ready before the next one that depends on it
+  // runs (sync -> analytics -> trend -> idea -> planning).
+  defaultFrequency: "off" | "daily";
+  defaultHour: number;
   run: (ctx: AgentContext) => Promise<string>;
 }
 
@@ -25,8 +30,8 @@ export const AGENT_REGISTRY: Record<string, AgentDefinitionConfig> = {
     name: "Instagram sync",
     description:
       "Pulls your latest reels, posts, and follower count from Instagram automatically, every day.",
-    schedule: "50 5 * * *",
-    enabledByDefault: true,
+    defaultFrequency: "daily",
+    defaultHour: 5,
     run: runSyncAgent,
   },
   analytics: {
@@ -34,32 +39,32 @@ export const AGENT_REGISTRY: Record<string, AgentDefinitionConfig> = {
     name: "Analytics",
     description:
       "Crunches your reel performance daily, flags anomalies, and updates your Content DNA profile.",
-    schedule: "0 6 * * *",
-    enabledByDefault: true,
+    defaultFrequency: "daily",
+    defaultHour: 6,
     run: runAnalyticsAgent,
   },
   trend: {
     key: "trend",
     name: "Trend scanner",
     description: "Researches current trends in your niche using web search.",
-    schedule: "10 6 * * *",
-    enabledByDefault: true,
+    defaultFrequency: "daily",
+    defaultHour: 7,
     run: runTrendAgent,
   },
   idea: {
     key: "idea",
     name: "Idea creation",
     description: "Generates video ideas from current trends and your Content DNA.",
-    schedule: "20 6 * * *",
-    enabledByDefault: true,
+    defaultFrequency: "daily",
+    defaultHour: 8,
     run: runIdeaAgent,
   },
   planning: {
     key: "planning",
     name: "Planning",
     description: "Turns the best idea into today's concrete hook and script.",
-    schedule: "30 6 * * *",
-    enabledByDefault: true,
+    defaultFrequency: "daily",
+    defaultHour: 9,
     run: runPlanningAgent,
   },
   dm: {
@@ -67,8 +72,8 @@ export const AGENT_REGISTRY: Record<string, AgentDefinitionConfig> = {
     name: "DM manager",
     description:
       "Categorizes Instagram DMs and drafts suggested replies for you to review - never sends automatically.",
-    schedule: "*/15 * * * *",
-    enabledByDefault: false,
+    defaultFrequency: "off",
+    defaultHour: 10,
     run: runDmAgent,
   },
 };
