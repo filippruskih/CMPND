@@ -1,9 +1,10 @@
-// Original monogram — "AI" for the agents, with a small "+" accent for
-// growth — drawn as strokes so it matches the weight/style of the lucide
-// icons used everywhere else in the app, rather than relying on a
-// rendered font (which would look inconsistent between this live SVG and
-// the pre-rasterized PNG app icons built from the same path data — see
-// scripts/gen-icons.mjs).
+// CMPND mark — three connected nodes, read two ways at once: a chemical
+// compound (bonded atoms) and a cluster of data points drawn together by
+// the app's agents. Bonds are strokes (matching the weight of the lucide
+// icons used everywhere else in the app); nodes are filled solid so the
+// mark stays bold and legible at small sizes (favicon, app icon) rather
+// than thinning out - see scripts/gen-icons.mjs for the rasterized PNG
+// variants built from this same shape.
 export function AppLogoMark({ className }: { className?: string }) {
   return (
     <svg
@@ -15,11 +16,10 @@ export function AppLogoMark({ className }: { className?: string }) {
       strokeLinejoin="round"
       className={className}
     >
-      <path d="M2.8 19 L6 4.5 L9.2 19" />
-      <path d="M4.5 13.5 L7.5 13.5" />
-      <path d="M11 4.5 L11 19" />
-      <path d="M12.8 6 L16.8 6" />
-      <path d="M14.8 4 L14.8 8" />
+      <path d="M12 5.4 L6 18 L18 18 Z" />
+      <circle cx="12" cy="5.4" r="2.6" fill="currentColor" stroke="none" />
+      <circle cx="6" cy="18" r="2.6" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="18" r="2.6" fill="currentColor" stroke="none" />
     </svg>
   );
 }

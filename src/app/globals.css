@@ -50,74 +50,84 @@
 }
 
 :root {
-  --background: oklch(0.984 0.006 279);
-  --foreground: oklch(0.19 0.025 279);
+  --background: oklch(0.984 0.006 145);
+  --foreground: oklch(0.19 0.025 145);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.19 0.025 279);
+  --card-foreground: oklch(0.19 0.025 145);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.19 0.025 279);
-  --primary: oklch(0.523 0.211 279);
-  --primary-foreground: oklch(0.99 0.005 279);
-  --secondary: oklch(0.955 0.009 279);
-  --secondary-foreground: oklch(0.28 0.03 279);
-  --muted: oklch(0.955 0.009 279);
-  --muted-foreground: oklch(0.49 0.02 279);
-  --accent: oklch(0.94 0.028 279);
-  --accent-foreground: oklch(0.32 0.06 279);
+  --popover-foreground: oklch(0.19 0.025 145);
+  /* Deeper than the pale logo sage (#B9C6AE) on purpose - this is the
+     background for primary buttons, which still carry white text, so it
+     needs the same contrast the old saturated purple provided. Same
+     lightness as the old primary, just re-hued to sage and far less
+     saturated. */
+  --primary: oklch(0.52 0.07 145);
+  --primary-foreground: oklch(0.99 0.005 145);
+  --secondary: oklch(0.955 0.009 145);
+  --secondary-foreground: oklch(0.28 0.03 145);
+  --muted: oklch(0.955 0.009 145);
+  --muted-foreground: oklch(0.49 0.02 145);
+  --accent: oklch(0.94 0.028 145);
+  --accent-foreground: oklch(0.32 0.06 145);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.905 0.012 279);
-  --input: oklch(0.905 0.012 279);
-  --ring: oklch(0.6 0.18 279);
-  --chart-1: #2a78d6;
-  --chart-2: #eb6834;
-  --chart-3: #1baf7a;
-  --chart-4: #eda100;
-  --chart-5: #e87ba4;
+  --border: oklch(0.905 0.012 145);
+  --input: oklch(0.905 0.012 145);
+  --ring: oklch(0.52 0.07 145);
+  /* Categorical palette (icon badges, nav, charts) - softened into the
+     same muted/pastel family as the sage brand color while keeping
+     distinct hues, since these colors do a real job telling sections
+     apart at a glance and collapsing them toward one hue would break
+     that. chart-3 lands in the sage family itself. */
+  --chart-1: #6b93c4;
+  --chart-2: #d98f63;
+  --chart-3: #8fa883;
+  --chart-4: #c9a24e;
+  --chart-5: #cc8098;
   --delta-good: #006300;
   --radius: 0.85rem;
-  --sidebar: oklch(0.975 0.011 279);
-  --sidebar-foreground: oklch(0.24 0.025 279);
-  --sidebar-primary: oklch(0.523 0.211 279);
-  --sidebar-primary-foreground: oklch(0.99 0.005 279);
-  --sidebar-accent: oklch(0.928 0.026 279);
-  --sidebar-accent-foreground: oklch(0.32 0.07 279);
-  --sidebar-border: oklch(0.905 0.014 279);
-  --sidebar-ring: oklch(0.6 0.18 279);
+  --sidebar: oklch(0.975 0.011 145);
+  --sidebar-foreground: oklch(0.24 0.025 145);
+  --sidebar-primary: oklch(0.52 0.07 145);
+  --sidebar-primary-foreground: oklch(0.99 0.005 145);
+  --sidebar-accent: oklch(0.928 0.026 145);
+  --sidebar-accent-foreground: oklch(0.32 0.07 145);
+  --sidebar-border: oklch(0.905 0.014 145);
+  --sidebar-ring: oklch(0.52 0.07 145);
 }
 
 .dark {
-  --background: oklch(0.16 0.016 279);
-  --foreground: oklch(0.96 0.006 279);
-  --card: oklch(0.212 0.018 279);
-  --card-foreground: oklch(0.96 0.006 279);
-  --popover: oklch(0.212 0.018 279);
-  --popover-foreground: oklch(0.96 0.006 279);
-  --primary: oklch(0.685 0.19 285);
-  --primary-foreground: oklch(0.14 0.02 279);
-  --secondary: oklch(0.27 0.018 279);
-  --secondary-foreground: oklch(0.96 0.006 279);
-  --muted: oklch(0.27 0.018 279);
-  --muted-foreground: oklch(0.685 0.018 279);
-  --accent: oklch(0.29 0.036 283);
-  --accent-foreground: oklch(0.91 0.03 283);
+  --background: oklch(0.16 0.016 145);
+  --foreground: oklch(0.96 0.006 145);
+  --card: oklch(0.212 0.018 145);
+  --card-foreground: oklch(0.96 0.006 145);
+  --popover: oklch(0.212 0.018 145);
+  --popover-foreground: oklch(0.96 0.006 145);
+  --primary: oklch(0.72 0.09 145);
+  --primary-foreground: oklch(0.14 0.02 145);
+  --secondary: oklch(0.27 0.018 145);
+  --secondary-foreground: oklch(0.96 0.006 145);
+  --muted: oklch(0.27 0.018 145);
+  --muted-foreground: oklch(0.685 0.018 145);
+  --accent: oklch(0.29 0.036 145);
+  --accent-foreground: oklch(0.91 0.03 145);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.685 0.19 285);
-  --chart-1: #3987e5;
-  --chart-2: #d95926;
-  --chart-3: #199e70;
-  --chart-4: #c98500;
-  --chart-5: #d55181;
+  --ring: oklch(0.72 0.09 145);
+  --chart-1: #85a9d4;
+  --chart-2: #e3a67d;
+  --chart-3: #a3bc97;
+  --chart-4: #d9b66b;
+  --chart-5: #db96ac;
   --delta-good: #0ca30c;
-  --sidebar: oklch(0.125 0.017 279);
-  --sidebar-foreground: oklch(0.91 0.012 279);
-  --sidebar-primary: oklch(0.685 0.19 285);
-  --sidebar-primary-foreground: oklch(0.14 0.02 279);
-  --sidebar-accent: oklch(0.25 0.036 283);
-  --sidebar-accent-foreground: oklch(0.91 0.03 283);
+  --sidebar: oklch(0.125 0.017 145);
+  --sidebar-foreground: oklch(0.91 0.012 145);
+  --sidebar-primary: oklch(0.72 0.09 145);
+  --sidebar-primary-foreground: oklch(0.14 0.02 145);
+  --sidebar-accent: oklch(0.25 0.036 145);
+  --sidebar-accent-foreground: oklch(0.91 0.03 145);
   --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.685 0.19 285);
+  --sidebar-ring: oklch(0.72 0.09 145);
 }
 
 @layer base {

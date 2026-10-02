@@ -20,7 +20,7 @@ export default async function LoginPage({
         <CardHeader className="flex flex-col items-center gap-3 text-center">
           <div
             className="flex size-12 items-center justify-center rounded-xl text-white shadow-sm"
-            style={{ background: "linear-gradient(135deg, var(--primary), var(--chart-5))" }}
+            style={{ background: "#B9C6AE" }}
           >
             <AppLogoMark className="size-6" />
           </div>

@@ -16,7 +16,7 @@ export function TopHeader() {
       <Link href="/" className="flex items-center gap-2.5">
         <div
           className="flex aspect-square size-7 shrink-0 items-center justify-center rounded-lg text-white"
-          style={{ background: "linear-gradient(135deg, var(--primary), var(--chart-5))" }}
+          style={{ background: "#B9C6AE" }}
         >
           <AppLogoMark className="size-4" />
         </div>
