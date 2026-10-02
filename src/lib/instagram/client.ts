@@ -43,6 +43,10 @@ export interface InstagramMedia {
   caption: string | null;
   timestamp: string;
   thumbnailUrl: string | null;
+  // The raw video/image file - only used transiently during sync (e.g. to
+  // probe a reel's duration), never persisted, since Instagram's media_url
+  // is a short-lived signed URL that goes stale.
+  mediaUrl: string | null;
 }
 
 // The /media edge has no server-side filter by content type, so we page
@@ -86,6 +90,7 @@ export async function getRecentMedia(
         caption: item.caption ?? null,
         timestamp: item.timestamp,
         thumbnailUrl: item.thumbnail_url ?? item.media_url ?? null,
+        mediaUrl: item.media_url ?? null,
       })
     );
 

@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
 import { MetricLineChart } from "@/components/metric-line-chart";
 import { ExportButton } from "@/components/export-button";
+import { BestPracticesCard } from "@/components/insights/best-practices-card";
 import {
   getBestDayToPost,
   getContentMixComparison,
@@ -15,16 +16,18 @@ import {
 import { getLatestContentDna } from "@/lib/content-dna";
 import { formatLabel } from "@/lib/content/classify";
 import { formatCompactNumber, formatDate, formatPercent } from "@/lib/format";
+import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function InsightsPage() {
-  const [consistency, bestDays, trend, mix, dnaProfile] = await Promise.all([
+  const [consistency, bestDays, trend, mix, dnaProfile, bestPractices] = await Promise.all([
     getPostingConsistency(),
     getBestDayToPost(),
     getEngagementTrend(),
     getContentMixComparison(),
     getLatestContentDna(),
+    db.bestPractice.findMany({ where: { status: "open" }, orderBy: { createdAt: "desc" } }),
   ]);
 
   const hasAnyData = consistency.daysSinceLastPost != null;
@@ -38,6 +41,8 @@ export default async function InsightsPage() {
         description="Deterministic growth signals derived from your history - posting cadence, timing, and trend, not AI narrative."
         action={<ExportButton />}
       />
+
+      <BestPracticesCard items={bestPractices} />
 
       {!hasAnyData ? (
         <Card>

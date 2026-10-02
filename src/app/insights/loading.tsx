@@ -6,6 +6,7 @@ export default function InsightsLoading() {
   return (
     <div className="flex flex-1 flex-col gap-4">
       <PageHeaderSkeleton />
+      <Skeleton className="h-28 w-full rounded-lg" />
       <div className="grid gap-4 md:grid-cols-2">
         <StatTilesSkeleton count={2} />
         <Card>

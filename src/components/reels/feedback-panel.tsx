@@ -30,9 +30,8 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
       <CardHeader>
         <CardTitle className="text-base">Feedback loop</CardTitle>
         <p className="text-sm text-muted-foreground">
-          How this reel compares to your history. &quot;Same length&quot; isn&apos;t shown -
-          Instagram&apos;s API doesn&apos;t expose reel duration. Competitor comparisons are
-          planned for a later phase.
+          How this reel compares to your history. Competitor comparisons are planned for a later
+          phase.
         </p>
       </CardHeader>
       <CardContent>
@@ -84,7 +83,15 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
         <p className="mt-3 text-xs text-muted-foreground">
           This reel: {insight?.views != null ? formatCompactNumber(insight.views) : "-"} plays,{" "}
           {insight?.engagementRate != null ? formatPercent(insight.engagementRate) : "-"}{" "}
-          engagement.
+          engagement
+          {feedback.reel.durationMs != null && (
+            <>
+              , {formatSecondsFromMs(feedback.reel.durationMs)} long
+              {insight?.avgWatchTimeMs != null &&
+                ` (avg watch ${formatSecondsFromMs(insight.avgWatchTimeMs)})`}
+            </>
+          )}
+          .
         </p>
       </CardContent>
     </Card>

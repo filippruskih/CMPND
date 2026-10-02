@@ -5,6 +5,7 @@ import { formatCompactNumber, formatPercent } from "@/lib/format";
 import type { AgentContext } from "@/lib/agents/registry";
 import { AgentSkip } from "@/lib/agents/errors";
 import { updateContentDna } from "@/lib/agents/tasks/content-dna";
+import { updateBestPractices } from "@/lib/agents/tasks/best-practices";
 
 interface Anomaly {
   caption: string;
@@ -121,6 +122,7 @@ export async function runAnalyticsAgent(ctx: AgentContext): Promise<string> {
   await ctx.log("Summary ready.");
 
   await updateContentDna(ctx, ctx.runId);
+  await updateBestPractices(ctx, ctx.runId);
 
   return summary || "Analysis complete.";
 }

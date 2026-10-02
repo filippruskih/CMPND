@@ -48,6 +48,10 @@ model Reel {
   // classified; topicTags is a JSON-encoded string array.
   format           String?
   topicTags        String?
+  // The Graph API doesn't expose a reel's own duration as a field -
+  // probed from the raw video file via ffmpeg during sync instead (see
+  // lib/video/duration.ts), once, since it never changes after posting.
+  durationMs       Int?
   seriesId         String?
   series           Series?               @relation(fields: [seriesId], references: [id])
   createdAt        DateTime              @default(now())
@@ -169,6 +173,35 @@ model ContentDnaProfile {
   topFormatsJson    String // JSON: [{ format, avgViews, count }]
   topTopicsJson     String // JSON: [{ topic, avgViews, count }]
   sourceAgentRunId  String?
+}
+
+// High-conviction, durable recommendations ("you should really do X") the
+// Analytics agent surfaces after scanning full content history - unlike
+// Suggestion (a new daily rotating hook/script/caption), these persist
+// until the creator marks them done or dismisses them, and the agent is
+// told about existing open/resolved ones each run so it doesn't repeat
+// itself.
+model BestPractice {
+  id               String   @id @default(cuid())
+  title            String
+  description      String
+  status           String   @default("open") // "open" | "done" | "dismissed"
+  sourceAgentRunId String?
+  createdAt        DateTime @default(now())
+  resolvedAt       DateTime?
+}
+
+// The Idea agent's raw output, split into two distinct buckets rather
+// than one mixed list, so the UI can show "from your niche" and "new
+// territory" as genuinely separate sections instead of a label buried in
+// free text (see planning.ts, which still reads the combined text via
+// AgentRun.outputSummary for backward-compatible prompt construction).
+model IdeaBatch {
+  id               String   @id @default(cuid())
+  generatedAt      DateTime @default(now())
+  nicheIdeasJson   String // JSON: [{ concept, why }]
+  freshIdeasJson   String // JSON: [{ concept, why }]
+  sourceAgentRunId String?
 }
 
 // A DM conversation, populated by the Instagram Messaging webhook receiver

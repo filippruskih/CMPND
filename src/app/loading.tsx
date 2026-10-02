@@ -26,6 +26,7 @@ export default function OverviewLoading() {
           </Card>
         </div>
       </div>
+      <Skeleton className="h-40 w-full rounded-lg" />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { classifyReel, classifyTopics } from "@/lib/content/classify";
+import { getVideoDurationMs } from "@/lib/video/duration";
 import { refreshLongLivedToken } from "./auth";
 import {
   getProfile,
@@ -46,6 +47,18 @@ async function syncReel(accessToken: string, item: InstagramMedia) {
       });
     } catch (error) {
       console.error(`Failed to classify reel ${savedReel.id}`, error);
+    }
+  }
+
+  // A reel's duration never changes once posted, so only probe it once.
+  if (savedReel.durationMs == null && item.mediaUrl) {
+    try {
+      const durationMs = await getVideoDurationMs(item.mediaUrl);
+      if (durationMs != null) {
+        await db.reel.update({ where: { id: savedReel.id }, data: { durationMs } });
+      }
+    } catch (error) {
+      console.error(`Failed to probe duration for reel ${savedReel.id}`, error);
     }
   }
 

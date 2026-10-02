@@ -90,11 +90,21 @@ export default async function ReelDetailPage({
           value={insight?.avgWatchTimeMs}
           format={(v) => formatSecondsFromMs(v)}
         />
+        <Metric
+          label="Reel length"
+          value={reel.durationMs}
+          format={(v) => formatSecondsFromMs(v)}
+        />
       </div>
       <p className="text-xs text-muted-foreground">
         Avg watch time is Instagram&apos;s closest available proxy for audience retention - the
         API doesn&apos;t expose a full second-by-second retention curve, only this and the
         in-app Insights screen do.
+        {insight?.avgWatchTimeMs != null && reel.durationMs != null && reel.durationMs > 0
+          ? ` Against this reel's ${formatSecondsFromMs(reel.durationMs)} length, that's roughly ${formatPercent(
+              Math.min(1, insight.avgWatchTimeMs / reel.durationMs)
+            )} watched on average.`
+          : ""}
       </p>
 
       {viewsHistory.length > 1 && (

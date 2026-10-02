@@ -21,6 +21,50 @@ async function getRecentCaptions(): Promise<string[]> {
   return reels.map((r) => r.caption).filter((c): c is string => !!c);
 }
 
+interface IdeaItem {
+  concept: string;
+  why: string;
+}
+
+const IDEA_SCHEMA = {
+  type: "object",
+  properties: {
+    nicheIdeas: {
+      type: "array",
+      description: "Ideas that build on this creator's existing niche/Content DNA - refining what already works",
+      items: {
+        type: "object",
+        properties: {
+          concept: { type: "string", description: "A one-line concept for the reel" },
+          why: { type: "string", description: "Why this fits their established niche and what's worked before" },
+        },
+        required: ["concept", "why"],
+        additionalProperties: false,
+      },
+    },
+    freshIdeas: {
+      type: "array",
+      description: "Ideas exploring a new but related topic or angle currently trending in their niche, which they haven't covered yet",
+      items: {
+        type: "object",
+        properties: {
+          concept: { type: "string", description: "A one-line concept for the reel" },
+          why: { type: "string", description: "Why this trending topic/angle is worth trying even though it's new territory" },
+        },
+        required: ["concept", "why"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["nicheIdeas", "freshIdeas"],
+  additionalProperties: false,
+};
+
+function formatIdeaList(label: string, items: IdeaItem[]): string {
+  if (items.length === 0) return "";
+  return `${label}:\n${items.map((i) => `- ${i.concept} - ${i.why}`).join("\n")}\n`;
+}
+
 export async function runIdeaAgent(ctx: AgentContext): Promise<string> {
   await ctx.log("Reading the latest trend research…");
   const trends = await getLatestAgentOutput("trend");
@@ -40,12 +84,13 @@ export async function runIdeaAgent(ctx: AgentContext): Promise<string> {
   const excludedTopics = parseExcludedTopics(settings.excludedTopics);
 
   requireAnthropicKey();
-  await ctx.log("Generating video ideas…");
+  await ctx.log("Generating video ideas, split into niche and fresh-territory buckets…");
 
   const response = await anthropic.messages.create({
     model: AGENT_MODEL,
-    max_tokens: 800,
+    max_tokens: 1000,
     thinking: { type: "disabled" },
+    output_config: { format: { type: "json_schema", schema: IDEA_SCHEMA } },
     messages: [
       {
         role: "user",
@@ -62,7 +107,11 @@ ${
   excludedTopics.length > 0
     ? `This creator never wants to see ideas about the following - do not suggest anything touching these, even tangentially:\n${excludedTopics.map((t) => `- ${t}`).join("\n")}\n`
     : ""
-}Generate 3 concrete, specific video ideas for their next reel, grounded in the trend research above and (if given) their Content DNA. Aim for a mix, not three variations of the same thing: about 2 ideas that build on this creator's existing niche and what has already worked for them, and at least 1 idea that explores a new but related topic or angle they haven't covered yet, to help them expand their range. Label each idea as either "within your niche" or "new territory". For each idea give: a one-line concept, and why it fits both the trend and their niche (or why the stretch is worth trying). Keep it under 300 words total.
+}Generate two distinct sets of concrete, specific video ideas for their next reel:
+1. "nicheIdeas" (2 ideas) - building on this creator's existing niche and what has already worked for them.
+2. "freshIdeas" (2 ideas) - genuinely new topics or angles that are currently trending in their niche right now (from the trend research above) which they have not covered yet, to help them expand their range.
+
+Keep each idea concise. Ground every idea in the trend research and/or Content DNA given, not generic advice.
 
 ${NO_EM_DASH_INSTRUCTION}`,
       },
@@ -70,8 +119,24 @@ ${NO_EM_DASH_INSTRUCTION}`,
   });
 
   const textBlock = response.content.find((b) => b.type === "text");
-  const ideas = textBlock && textBlock.type === "text" ? textBlock.text.trim() : "";
+  if (!textBlock || textBlock.type !== "text") {
+    throw new Error("Idea response had no text content");
+  }
+  const parsed = JSON.parse(textBlock.text) as { nicheIdeas: IdeaItem[]; freshIdeas: IdeaItem[] };
+
+  await db.ideaBatch.create({
+    data: {
+      nicheIdeasJson: JSON.stringify(parsed.nicheIdeas),
+      freshIdeasJson: JSON.stringify(parsed.freshIdeas),
+      sourceAgentRunId: ctx.runId,
+    },
+  });
+
+  const summary =
+    formatIdeaList("Within your niche", parsed.nicheIdeas) +
+    formatIdeaList("New territory", parsed.freshIdeas);
+
   await ctx.log("Ideas ready.");
 
-  return ideas || "No ideas generated.";
+  return summary.trim() || "No ideas generated.";
 }
