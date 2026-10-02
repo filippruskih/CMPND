@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Creator Dashboard",
-    short_name: "Dashboard",
+    name: "CMPND",
+    short_name: "CMPND",
     description: "Personal Instagram Reels analytics & content agents",
     start_url: "/",
     display: "standalone",

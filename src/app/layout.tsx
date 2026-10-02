@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Creator Dashboard",
+  title: "CMPND",
   description: "Personal Instagram Reels analytics & content agents",
   // app/manifest.ts is an automatic file convention — Next injects the
   // <link rel="manifest"> itself, no need to reference it here.
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Dashboard",
+    title: "CMPND",
   },
 };
 

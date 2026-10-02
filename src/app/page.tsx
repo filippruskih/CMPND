@@ -42,7 +42,7 @@ export default async function OverviewPage() {
           })}
         </p>
         <h1 className="relative mt-1 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-          {account ? `Welcome back, @${account.username}` : "Welcome to your Creator Dashboard"}
+          {account ? `Welcome back, @${account.username}` : "Welcome to CMPND"}
         </h1>
         <p className="relative mt-1.5 max-w-xl text-sm text-white/80 text-pretty">
           Followers, plays, top reel, and engagement at a glance.

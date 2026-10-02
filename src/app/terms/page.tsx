@@ -1,4 +1,4 @@
-export const metadata = { title: "Terms of Service - Creator Dashboard" };
+export const metadata = { title: "Terms of Service - CMPND" };
 
 export default function TermsOfServicePage() {
   return (
@@ -10,7 +10,7 @@ export default function TermsOfServicePage() {
 
       <Section title="1. Agreement">
         <p>
-          These Terms govern your use of Creator Dashboard (&quot;the Service&quot;), operated by
+          These Terms govern your use of CMPND (&quot;the Service&quot;), operated by
           [YOUR BUSINESS / LEGAL NAME] (&quot;we&quot;, &quot;us&quot;). By creating an account or
           connecting your Instagram account, you agree to these Terms and to our{" "}
           <a href="/privacy" className="underline">

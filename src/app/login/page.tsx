@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AppLogoMark } from "@/components/app-logo-mark";
 
-export const metadata = { title: "Log in - Creator Dashboard" };
+export const metadata = { title: "Log in - CMPND" };
 
 export default async function LoginPage({
   searchParams,
@@ -25,7 +25,7 @@ export default async function LoginPage({
             <AppLogoMark className="size-6" />
           </div>
           <div>
-            <CardTitle>Creator Dashboard</CardTitle>
+            <CardTitle>CMPND</CardTitle>
             <CardDescription>Enter the password to continue.</CardDescription>
           </div>
         </CardHeader>

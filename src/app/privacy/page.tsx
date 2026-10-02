@@ -1,4 +1,4 @@
-export const metadata = { title: "Privacy Policy - Creator Dashboard" };
+export const metadata = { title: "Privacy Policy - CMPND" };
 
 export default function PrivacyPolicyPage() {
   return (
@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage() {
 
       <Section title="Who we are">
         <p>
-          Creator Dashboard (&quot;we&quot;, &quot;us&quot;) is operated by Filipp Ruskih. This policy explains what data we collect through your connected Instagram
+          CMPND (&quot;we&quot;, &quot;us&quot;) is operated by Filipp Ruskih. This policy explains what data we collect through your connected Instagram
           account, how we use it, and how you can request its deletion. Contact us at{" "}
           <a href="mailto:filippruskih@gmail.com" className="underline">
             Support Team
