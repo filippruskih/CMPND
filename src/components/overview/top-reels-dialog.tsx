@@ -19,6 +19,13 @@ export function TopReelsDialog({ trigger, reels }: { trigger: ReactNode; reels: 
         <DialogHeader>
           <DialogTitle>Top {reels.length} reels</DialogTitle>
         </DialogHeader>
+        <div className="flex items-center gap-3 px-1.5 text-xs text-muted-foreground">
+          <span className="w-5 shrink-0" />
+          <span className="size-10 shrink-0" />
+          <span className="flex-1">Reel</span>
+          <span className="shrink-0">Plays</span>
+          <span className="w-12 shrink-0 text-right">Engagement</span>
+        </div>
         <div className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto">
           {reels.map((reel, i) => {
             const insight = reel.latestInsight;
