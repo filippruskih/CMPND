@@ -1,17 +1,18 @@
 import Link from "next/link";
-import { Film, Image as ImageIcon, ListTree } from "lucide-react";
+import { CalendarDays, Film, Image as ImageIcon, ListTree } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TABS = [
   { key: "reels", label: "Reels", href: "/reels", icon: Film },
   { key: "posts", label: "Posts", href: "/posts", icon: ImageIcon },
   { key: "series", label: "Series", href: "/series", icon: ListTree },
+  { key: "calendar", label: "Calendar", href: "/calendar", icon: CalendarDays },
 ] as const;
 
-// Reels, Posts, and Series are three separate real pages (each keeps its
-// own pagination/data-fetching), but they're presented as one "Content"
-// category from the bottom nav — this strip is what makes them feel like
-// tabs of one section instead of three unrelated destinations.
+// Reels, Posts, Series, and Calendar are separate real pages (each keeps
+// its own pagination/data-fetching), but they're presented as one
+// "Content" category from the bottom nav — this strip is what makes them
+// feel like tabs of one section instead of unrelated destinations.
 export function ContentTabs({ active }: { active: (typeof TABS)[number]["key"] }) {
   return (
     <div className="flex w-fit gap-1 rounded-lg bg-muted p-1">

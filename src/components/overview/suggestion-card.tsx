@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconBadge } from "@/components/icon-badge";
+import { ScheduleSuggestionButton } from "@/components/overview/schedule-suggestion-button";
 import { formatDate } from "@/lib/format";
 
 interface Suggestion {
@@ -131,10 +132,16 @@ export function SuggestionCard({ suggestions }: { suggestions: Suggestion[] }) {
             </div>
           </>
         )}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button size="sm" disabled={pending} onClick={() => setStatus("used")}>
             <Check /> Mark as used
           </Button>
+          <ScheduleSuggestionButton
+            suggestionId={suggestion.id}
+            contentType={isPost ? "post" : "reel"}
+            title={(isPost ? suggestion.concept : suggestion.hook) ?? ""}
+            notes={(isPost ? suggestion.caption : suggestion.script) ?? ""}
+          />
           <Button size="sm" variant="outline" disabled={pending} onClick={() => setStatus("dismissed")}>
             <X /> Dismiss
           </Button>

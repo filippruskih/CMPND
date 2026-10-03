@@ -289,6 +289,26 @@ model DraftReel {
   updatedAt    DateTime  @updatedAt
 }
 
+// A planned (not yet posted) piece of content for a specific date - purely
+// an organizational/planning record, not tied to Instagram in any way
+// until the creator actually posts it themselves. The calendar overlays
+// these with real Reel/Post postedAt dates for a combined
+// planned-vs-actual view, but that overlay is computed at read time, not
+// a stored link - see lib/calendar.ts.
+model CalendarEntry {
+  id                 String   @id @default(cuid())
+  date               DateTime
+  contentType        String // "reel" | "post"
+  title              String // the hook, or a short post concept
+  notes              String? // script, caption, or free notes
+  status             String   @default("planned") // "planned" | "drafted" | "posted" | "skipped"
+  sourceSuggestionId String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([date])
+}
+
 // A tracked public competitor account, synced via Instagram's Business
 // Discovery API (see lib/instagram/client.ts getBusinessDiscovery) - only
 // exposes public fields (followers, posts, likes, comments), never

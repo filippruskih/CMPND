@@ -39,7 +39,7 @@ export const bottomNavItems: NavItem[] = [
     url: "/reels",
     icon: Grid3x3,
     color: "orange",
-    matchPrefixes: ["/reels", "/posts", "/series"],
+    matchPrefixes: ["/reels", "/posts", "/series", "/calendar"],
   },
   {
     key: "insights",
