@@ -2,6 +2,7 @@ import {
   Activity,
   Bot,
   FileText,
+  FlaskConical,
   Grid3x3,
   Home,
   MessageCircle,
@@ -126,6 +127,17 @@ export const reportsNavItem: NavItem = {
   matchPrefixes: ["/reports"],
 };
 
+// Reached via the "More" menu on the Insights page, same reasoning as
+// competitorsNavItem above.
+export const experimentsNavItem: NavItem = {
+  key: "experiments",
+  title: "Growth experiments",
+  url: "/experiments",
+  icon: FlaskConical,
+  color: "magenta",
+  matchPrefixes: ["/experiments"],
+};
+
 function isItemActive(item: NavItem, pathname: string): boolean {
   return item.matchPrefixes.some((prefix) =>
     prefix === "/" ? pathname === "/" : pathname.startsWith(prefix)
@@ -146,6 +158,7 @@ export function getActiveNavItem(pathname: string): NavItem {
       competitorsNavItem,
       retentionNavItem,
       reportsNavItem,
+      experimentsNavItem,
     ].find((item) =>
       isItemActive(item, pathname)
     ) ?? bottomNavItems[0]

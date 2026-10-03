@@ -1,7 +1,5 @@
-import Link from "next/link";
-import { Activity, CalendarClock, Dna, Film, Image as ImageIcon, Scale, TrendingUp, Users } from "lucide-react";
+import { CalendarClock, Dna, Film, Image as ImageIcon, Scale, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconBadge } from "@/components/icon-badge";
 import { PageHeader } from "@/components/page-header";
@@ -9,6 +7,7 @@ import { EmptyState } from "@/components/empty-state";
 import { MetricLineChart } from "@/components/metric-line-chart";
 import { ExportButton } from "@/components/export-button";
 import { BestPracticesCard } from "@/components/insights/best-practices-card";
+import { MoreToolsMenu } from "@/components/insights/more-tools-menu";
 import {
   getBestDayToPost,
   getContentMixComparison,
@@ -43,16 +42,7 @@ export default async function InsightsPage() {
         description="Deterministic growth signals derived from your history - posting cadence, timing, and trend, not AI narrative."
         action={
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <Button size="sm" variant="outline" asChild>
-              <Link href="/retention">
-                <Activity /> Retention
-              </Link>
-            </Button>
-            <Button size="sm" variant="outline" asChild>
-              <Link href="/competitors">
-                <Users /> Competitors
-              </Link>
-            </Button>
+            <MoreToolsMenu />
             <ExportButton />
           </div>
         }
