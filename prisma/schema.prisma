@@ -52,6 +52,12 @@ model Reel {
   // probed from the raw video file via ffmpeg during sync instead (see
   // lib/video/duration.ts), once, since it never changes after posting.
   durationMs       Int?
+  // AI-generated "why did this perform the way it did" narrative, grounded
+  // in the feedback-loop baselines (see lib/feedback.ts) - user-triggered,
+  // not generated automatically, and re-runnable since more insight
+  // snapshots accrue over time. Null until first run.
+  performanceAnalysis   String?
+  performanceAnalysisAt DateTime?
   seriesId         String?
   series           Series?               @relation(fields: [seriesId], references: [id])
   createdAt        DateTime              @default(now())

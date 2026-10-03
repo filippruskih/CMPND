@@ -30,8 +30,7 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
       <CardHeader>
         <CardTitle className="text-base">Feedback loop</CardTitle>
         <p className="text-sm text-muted-foreground">
-          How this reel compares to your history. Competitor comparisons are planned for a later
-          phase.
+          How this reel compares to your history and (once tracked) competitor content.
         </p>
       </CardHeader>
       <CardContent>
@@ -51,17 +50,19 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
                 <TableRow key={baseline.key}>
                   <TableCell className="whitespace-normal">{baseline.label}</TableCell>
                   <TableCell className="text-right tabular-nums text-muted-foreground">
-                    {baseline.sampleSize}
+                    {baseline.available ? baseline.sampleSize : "-"}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
-                    {baseline.sampleSize === 0 ? (
+                    {!baseline.available ? (
+                      <span className="text-muted-foreground">Coming soon</span>
+                    ) : baseline.sampleSize === 0 ? (
                       <span className="text-muted-foreground">Not enough data</span>
                     ) : (
                       <DeltaCell value={insight?.views ?? null} baseline={baseline.avgViews} />
                     )}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
-                    {baseline.sampleSize === 0 ? (
+                    {!baseline.available || baseline.sampleSize === 0 ? (
                       <span className="text-muted-foreground">-</span>
                     ) : (
                       <DeltaCell

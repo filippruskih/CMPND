@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MetricLineChart } from "@/components/metric-line-chart";
 import { FeedbackPanel } from "@/components/reels/feedback-panel";
+import { ReelPerformanceCard } from "@/components/reels/reel-performance-card";
 import { SeriesAssign } from "@/components/reels/series-assign";
 import { BackLink } from "@/components/back-link";
 import { getReelDetail } from "@/lib/stats";
@@ -117,6 +118,12 @@ export default async function ReelDetailPage({
           </CardContent>
         </Card>
       )}
+
+      <ReelPerformanceCard
+        reelId={reel.id}
+        initialAnalysis={reel.performanceAnalysis}
+        initialAnalyzedAt={reel.performanceAnalysisAt?.toISOString() ?? null}
+      />
 
       {feedback && <FeedbackPanel feedback={feedback} />}
     </div>

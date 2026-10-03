@@ -8,12 +8,18 @@ export interface BaselineComparison {
   avgViews: number | null;
   avgEngagementRate: number | null;
   avgWatchTimeMs: number | null;
+  // false only for baselines that aren't buildable yet at all (competitor
+  // content - no competitor tracking exists) - distinct from a real
+  // baseline that just happens to have zero matching reels so far.
+  available: boolean;
 }
 
 export interface FeedbackLoopResult {
   reel: ReelWithLatestInsight;
   baselines: BaselineComparison[];
 }
+
+const SAME_LENGTH_TOLERANCE = 0.25; // +/- 25% of this reel's own duration
 
 function average(values: (number | null | undefined)[]): number | null {
   const nums = values.filter((v): v is number => typeof v === "number");
@@ -33,6 +39,7 @@ function summarizeGroup(
     avgViews: average(group.map((r) => r.latestInsight?.views)),
     avgEngagementRate: average(group.map((r) => r.latestInsight?.engagementRate)),
     avgWatchTimeMs: average(group.map((r) => r.latestInsight?.avgWatchTimeMs)),
+    available: true,
   };
 }
 
@@ -45,10 +52,12 @@ function parseTopics(topicTags: string | null): string[] {
   }
 }
 
-// Every reel is scored against five baselines: your all-time average, your
-// top 10%, your previous 10 reels, reels sharing a topic tag, and reels
-// sharing a format. "Same length" and "competitor content" baselines are
-// intentionally not included — see the reel detail page for why.
+// Every reel is scored against seven baselines: your all-time average,
+// your top 10%, your previous 10 reels, reels sharing a topic tag, reels
+// sharing a format, reels of similar length, and competitor content.
+// Competitor content has no data source yet (no competitor tracking) -
+// it's still listed, just marked unavailable, rather than silently
+// dropped, since it's one of the comparisons this is meant to answer.
 export async function getFeedbackLoop(reelId: string): Promise<FeedbackLoopResult | null> {
   const allReels = await getReelsWithLatestInsights(); // sorted postedAt desc
   const index = allReels.findIndex((r) => r.id === reelId);
@@ -74,16 +83,38 @@ export async function getFeedbackLoop(reelId: string): Promise<FeedbackLoopResul
       ? others.filter((r) => parseTopics(r.topicTags).some((t) => reelTopics.includes(t)))
       : [];
 
+  const sameLength = reel.durationMs
+    ? others.filter(
+        (r) =>
+          r.durationMs != null &&
+          Math.abs(r.durationMs - reel.durationMs!) / reel.durationMs! <= SAME_LENGTH_TOLERANCE
+      )
+    : [];
+
   const baselines: BaselineComparison[] = [
     summarizeGroup("average", "Your average", others),
     summarizeGroup("top10", "Your top 10%", topGroup),
     summarizeGroup("previous10", "Previous 10 reels", previous10),
+    summarizeGroup("sameTopic", "Same topic", sameTopic),
+    summarizeGroup(
+      "sameLength",
+      reel.durationMs ? "Same length (+/-25%)" : "Same length",
+      sameLength
+    ),
     summarizeGroup(
       "sameFormat",
       reel.format ? `Same format (${formatLabel(reel.format)})` : "Same format",
       sameFormat
     ),
-    summarizeGroup("sameTopic", "Same topic", sameTopic),
+    {
+      key: "competitor",
+      label: "Competitor content",
+      sampleSize: 0,
+      avgViews: null,
+      avgEngagementRate: null,
+      avgWatchTimeMs: null,
+      available: false,
+    },
   ];
 
   return { reel, baselines };
