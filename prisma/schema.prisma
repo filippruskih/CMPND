@@ -58,6 +58,12 @@ model Reel {
   // snapshots accrue over time. Null until first run.
   performanceAnalysis   String?
   performanceAnalysisAt DateTime?
+  // AI hypothesis (not measured data - the Graph API exposes no per-second
+  // retention curve) about where in the reel viewers likely dropped off,
+  // inferred from its actual frames plus its real average-retention
+  // number. See lib/agents/tasks/retention-hypothesis.ts.
+  retentionHypothesis   String?
+  retentionHypothesisAt DateTime?
   seriesId         String?
   series           Series?               @relation(fields: [seriesId], references: [id])
   createdAt        DateTime              @default(now())

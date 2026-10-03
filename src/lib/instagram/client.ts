@@ -268,3 +268,12 @@ export async function getBusinessDiscovery(
     media,
   };
 }
+
+// media_url is a short-lived signed URL that goes stale, so it's never
+// persisted (see InstagramMedia) - this re-fetches a fresh one for a
+// media item that was already synced, e.g. to extract frames from an
+// already-posted reel for the retention-hypothesis analysis.
+export async function getMediaVideoUrl(accessToken: string, mediaId: string): Promise<string | null> {
+  const json = await igFetch(`/${mediaId}`, accessToken, { fields: "media_url" });
+  return json.media_url ?? null;
+}

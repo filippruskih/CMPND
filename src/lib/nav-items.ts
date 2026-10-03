@@ -1,4 +1,5 @@
 import {
+  Activity,
   Bot,
   Grid3x3,
   Home,
@@ -102,6 +103,17 @@ export const competitorsNavItem: NavItem = {
   matchPrefixes: ["/competitors"],
 };
 
+// Also reached via a button on the Insights page, same reasoning as
+// competitorsNavItem above.
+export const retentionNavItem: NavItem = {
+  key: "retention",
+  title: "Retention",
+  url: "/retention",
+  icon: Activity,
+  color: "aqua",
+  matchPrefixes: ["/retention"],
+};
+
 function isItemActive(item: NavItem, pathname: string): boolean {
   return item.matchPrefixes.some((prefix) =>
     prefix === "/" ? pathname === "/" : pathname.startsWith(prefix)
@@ -115,7 +127,7 @@ export function isNavItemActive(item: NavItem, pathname: string): boolean {
 // Used by the header's small "you are here" breadcrumb.
 export function getActiveNavItem(pathname: string): NavItem {
   return (
-    [...bottomNavItems, headerNavItem, scannerNavItem, competitorsNavItem].find((item) =>
+    [...bottomNavItems, headerNavItem, scannerNavItem, competitorsNavItem, retentionNavItem].find((item) =>
       isItemActive(item, pathname)
     ) ?? bottomNavItems[0]
   );
