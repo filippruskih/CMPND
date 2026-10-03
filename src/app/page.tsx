@@ -6,20 +6,23 @@ import { FollowerGrowthChart } from "@/components/overview/follower-growth-chart
 import { TopReelCard } from "@/components/overview/top-reel-card";
 import { SuggestionCard } from "@/components/overview/suggestion-card";
 import { IdeaBatchCard } from "@/components/overview/idea-batch-card";
+import { DailyReportCallout } from "@/components/overview/daily-report-callout";
 import { db } from "@/lib/db";
 import { getOverviewStats } from "@/lib/stats";
 import { getActiveSuggestions } from "@/lib/suggestions";
 import { getLatestIdeaBatch } from "@/lib/idea-batch";
+import { getLatestDailyReport } from "@/lib/daily-reports";
 import { formatCompactNumber, formatPercent } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function OverviewPage() {
-  const [stats, suggestions, account, ideaBatch] = await Promise.all([
+  const [stats, suggestions, account, ideaBatch, latestReport] = await Promise.all([
     getOverviewStats(),
     getActiveSuggestions(),
     db.account.findFirst(),
     getLatestIdeaBatch(),
+    getLatestDailyReport(),
   ]);
   const hasData = stats.followerCount != null || stats.reelCount > 0;
 
@@ -57,6 +60,8 @@ export default async function OverviewPage() {
         />
       ) : (
         <>
+          <DailyReportCallout report={latestReport} />
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatTile
               label="Followers"

@@ -4,6 +4,7 @@ import { runTrendAgent } from "./tasks/trend";
 import { runIdeaAgent } from "./tasks/idea";
 import { runPlanningAgent } from "./tasks/planning";
 import { runDmAgent } from "./tasks/dm";
+import { runDailyReportAgent } from "./tasks/daily-report";
 
 export interface AgentContext {
   runId: string;
@@ -75,5 +76,14 @@ export const AGENT_REGISTRY: Record<string, AgentDefinitionConfig> = {
     defaultFrequency: "off",
     defaultHour: 10,
     run: runDmAgent,
+  },
+  dailyReport: {
+    key: "dailyReport",
+    name: "Daily report",
+    description:
+      "Synthesizes the day's sync, analytics, trend, idea, and planning results into one briefing - emailed if configured, always saved in-app.",
+    defaultFrequency: "daily",
+    defaultHour: 10,
+    run: runDailyReportAgent,
   },
 };

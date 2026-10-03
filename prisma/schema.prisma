@@ -364,3 +364,19 @@ model CompetitorMedia {
 
   @@index([competitorId])
 }
+
+// The daily capstone - runs last in the agent pipeline (after sync,
+// analytics, trend, idea, planning) so it can synthesize all of their
+// output into one dated briefing. statsJson is a frozen snapshot (not
+// re-derived at read time) so an old report still shows the numbers as
+// they were that day, even as history keeps accruing.
+model DailyReport {
+  id               String    @id @default(cuid())
+  date             DateTime  @default(now())
+  summary          String
+  statsJson        String
+  emailSentAt      DateTime?
+  emailError       String?
+  sourceAgentRunId String?
+  createdAt        DateTime  @default(now())
+}

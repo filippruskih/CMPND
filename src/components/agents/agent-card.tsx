@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
+  FileText,
   Lightbulb,
   Loader2,
   MessageCircle,
@@ -45,6 +46,7 @@ const AGENT_ICONS: Record<string, { icon: typeof BarChart3; color: IconBadgeColo
   idea: { icon: Lightbulb, color: "aqua" },
   planning: { icon: CalendarClock, color: "yellow" },
   dm: { icon: MessageCircle, color: "magenta" },
+  dailyReport: { icon: FileText, color: "blue" },
 };
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

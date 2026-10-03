@@ -1,6 +1,7 @@
 import {
   Activity,
   Bot,
+  FileText,
   Grid3x3,
   Home,
   MessageCircle,
@@ -114,6 +115,17 @@ export const retentionNavItem: NavItem = {
   matchPrefixes: ["/retention"],
 };
 
+// Reached via a callout card on Overview, same reasoning as
+// competitorsNavItem above.
+export const reportsNavItem: NavItem = {
+  key: "reports",
+  title: "Daily reports",
+  url: "/reports",
+  icon: FileText,
+  color: "blue",
+  matchPrefixes: ["/reports"],
+};
+
 function isItemActive(item: NavItem, pathname: string): boolean {
   return item.matchPrefixes.some((prefix) =>
     prefix === "/" ? pathname === "/" : pathname.startsWith(prefix)
@@ -127,7 +139,14 @@ export function isNavItemActive(item: NavItem, pathname: string): boolean {
 // Used by the header's small "you are here" breadcrumb.
 export function getActiveNavItem(pathname: string): NavItem {
   return (
-    [...bottomNavItems, headerNavItem, scannerNavItem, competitorsNavItem, retentionNavItem].find((item) =>
+    [
+      ...bottomNavItems,
+      headerNavItem,
+      scannerNavItem,
+      competitorsNavItem,
+      retentionNavItem,
+      reportsNavItem,
+    ].find((item) =>
       isItemActive(item, pathname)
     ) ?? bottomNavItems[0]
   );

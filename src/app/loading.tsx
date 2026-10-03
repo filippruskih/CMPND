@@ -6,6 +6,7 @@ export default function OverviewLoading() {
   return (
     <div className="flex flex-1 flex-col gap-4">
       <Skeleton className="h-40 w-full rounded-2xl" />
+      <Skeleton className="h-16 w-full rounded-lg" />
       <StatTilesSkeleton count={4} />
       <div className="grid gap-4 lg:grid-cols-2">
         <ChartSkeleton />
