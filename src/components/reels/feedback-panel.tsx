@@ -30,7 +30,7 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
       <CardHeader>
         <CardTitle className="text-base">Feedback loop</CardTitle>
         <p className="text-sm text-muted-foreground">
-          How this reel compares to your history and (once tracked) competitor content.
+          How this reel compares to your history and tracked competitor content.
         </p>
       </CardHeader>
       <CardContent>
@@ -63,7 +63,13 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {!baseline.available || baseline.sampleSize === 0 ? (
-                      <span className="text-muted-foreground">-</span>
+                      <span className="text-muted-foreground">
+                        {!baseline.available ? "Coming soon" : "-"}
+                      </span>
+                    ) : baseline.isProxyEngagement ? (
+                      <span className="text-muted-foreground" title="Likes+comments per follower, not reach-based - see note below">
+                        ~{formatPercent(baseline.avgEngagementRate!)}*
+                      </span>
                     ) : (
                       <DeltaCell
                         value={insight?.engagementRate ?? null}
@@ -81,6 +87,13 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
             </TableBody>
           </Table>
         </div>
+        {feedback.baselines.some((b) => b.isProxyEngagement) && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            * Competitor engagement is (likes + comments) / followers, the only public proxy
+            Instagram exposes for accounts you don&apos;t own - not the same basis as your own
+            reach-based engagement rate, so treat it as a rough reference only.
+          </p>
+        )}
         <p className="mt-3 text-xs text-muted-foreground">
           This reel: {insight?.views != null ? formatCompactNumber(insight.views) : "-"} plays,{" "}
           {insight?.engagementRate != null ? formatPercent(insight.engagementRate) : "-"}{" "}

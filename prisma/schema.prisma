@@ -288,3 +288,53 @@ model DraftReel {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
+
+// A tracked public competitor account, synced via Instagram's Business
+// Discovery API (see lib/instagram/client.ts getBusinessDiscovery) - only
+// exposes public fields (followers, posts, likes, comments), never
+// reach/views/watch-time, since those require the competitor's own
+// access token.
+model Competitor {
+  id             String                @id @default(cuid())
+  username       String                @unique
+  followersCount Int?
+  mediaCount     Int?
+  lastSyncedAt   DateTime?
+  lastSyncError  String?
+  createdAt      DateTime              @default(now())
+  snapshots      CompetitorSnapshot[]
+  media          CompetitorMedia[]
+}
+
+// Point-in-time snapshot of a competitor's follower/media count, captured
+// on every sync - mirrors FollowerSnapshot, lets a growth-rate comparison
+// be charted the same way.
+model CompetitorSnapshot {
+  id             String     @id @default(cuid())
+  competitorId   String
+  competitor     Competitor @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  capturedAt     DateTime   @default(now())
+  followersCount Int?
+  mediaCount     Int?
+
+  @@index([competitorId])
+}
+
+model CompetitorMedia {
+  id               String     @id @default(cuid())
+  competitorId     String
+  competitor       Competitor @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  igMediaId        String     @unique
+  mediaType        String?
+  mediaProductType String?
+  caption          String?
+  permalink        String
+  thumbnailUrl     String?
+  postedAt         DateTime
+  likeCount        Int?
+  commentsCount    Int?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  @@index([competitorId])
+}

@@ -196,3 +196,75 @@ export async function getPostInsights(accessToken: string, mediaId: string): Pro
     totalInteractions: values.total_interactions ?? null,
   };
 }
+
+export interface BusinessDiscoveryMedia {
+  igMediaId: string;
+  mediaType: string | null;
+  mediaProductType: string | null;
+  caption: string | null;
+  permalink: string;
+  thumbnailUrl: string | null;
+  timestamp: string;
+  likeCount: number | null;
+  commentsCount: number | null;
+}
+
+export interface BusinessDiscoveryResult {
+  username: string;
+  followersCount: number | null;
+  mediaCount: number | null;
+  media: BusinessDiscoveryMedia[];
+}
+
+// "Business Discovery" - the only ToS-compliant way to see another
+// public Business/Creator account's data through the Graph API: it only
+// exposes public-facing fields (follower count, posts, likes, comments),
+// never reach/views/saves/watch-time, since those require the other
+// account's own access token, not ours. Requires `myIgUserId` (your own
+// connected account) because the query is made *as* your account looking
+// *at* theirs, not a generic lookup.
+export async function getBusinessDiscovery(
+  accessToken: string,
+  myIgUserId: string,
+  targetUsername: string
+): Promise<BusinessDiscoveryResult | null> {
+  const mediaFields =
+    "caption,like_count,comments_count,media_type,media_product_type,permalink,thumbnail_url,timestamp";
+  const json = await igFetch(`/${myIgUserId}`, accessToken, {
+    fields: `business_discovery.username(${targetUsername}){username,followers_count,media_count,media.limit(25){${mediaFields}}}`,
+  });
+
+  const discovery = json.business_discovery;
+  if (!discovery) return null;
+
+  const media: BusinessDiscoveryMedia[] = (discovery.media?.data ?? []).map(
+    (item: {
+      id: string;
+      media_type: string | null;
+      media_product_type: string | null;
+      caption: string | null;
+      permalink: string;
+      thumbnail_url: string | null;
+      timestamp: string;
+      like_count: number | null;
+      comments_count: number | null;
+    }) => ({
+      igMediaId: item.id,
+      mediaType: item.media_type ?? null,
+      mediaProductType: item.media_product_type ?? null,
+      caption: item.caption ?? null,
+      permalink: item.permalink,
+      thumbnailUrl: item.thumbnail_url ?? null,
+      timestamp: item.timestamp,
+      likeCount: item.like_count ?? null,
+      commentsCount: item.comments_count ?? null,
+    })
+  );
+
+  return {
+    username: discovery.username,
+    followersCount: discovery.followers_count ?? null,
+    mediaCount: discovery.media_count ?? null,
+    media,
+  };
+}

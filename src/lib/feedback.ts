@@ -1,3 +1,4 @@
+import { db } from "@/lib/db";
 import { formatLabel } from "@/lib/content/classify";
 import { getReelsWithLatestInsights, type ReelWithLatestInsight } from "@/lib/stats";
 
@@ -9,9 +10,49 @@ export interface BaselineComparison {
   avgEngagementRate: number | null;
   avgWatchTimeMs: number | null;
   // false only for baselines that aren't buildable yet at all (competitor
-  // content - no competitor tracking exists) - distinct from a real
-  // baseline that just happens to have zero matching reels so far.
+  // content - no competitors tracked) - distinct from a real baseline
+  // that just happens to have zero matching reels so far.
   available: boolean;
+  // True only for the competitor baseline's avgEngagementRate - it's
+  // (likes+comments)/followers, not the reach-based rate used everywhere
+  // else, since Instagram doesn't expose a competitor's reach. Lets the
+  // UI flag it instead of implying an apples-to-apples comparison.
+  isProxyEngagement?: boolean;
+}
+
+async function getCompetitorBaseline(): Promise<BaselineComparison> {
+  const media = await db.competitorMedia.findMany({
+    include: { competitor: { select: { followersCount: true } } },
+    orderBy: { postedAt: "desc" },
+    take: 200,
+  });
+
+  const rates = media
+    .filter((m) => m.competitor.followersCount && (m.likeCount != null || m.commentsCount != null))
+    .map((m) => ((m.likeCount ?? 0) + (m.commentsCount ?? 0)) / m.competitor.followersCount!);
+
+  if (rates.length === 0) {
+    return {
+      key: "competitor",
+      label: "Competitor content",
+      sampleSize: 0,
+      avgViews: null,
+      avgEngagementRate: null,
+      avgWatchTimeMs: null,
+      available: false,
+    };
+  }
+
+  return {
+    key: "competitor",
+    label: "Competitor content",
+    sampleSize: rates.length,
+    avgViews: null,
+    avgEngagementRate: rates.reduce((sum, r) => sum + r, 0) / rates.length,
+    avgWatchTimeMs: null,
+    available: true,
+    isProxyEngagement: true,
+  };
 }
 
 export interface FeedbackLoopResult {
@@ -59,7 +100,10 @@ function parseTopics(topicTags: string | null): string[] {
 // it's still listed, just marked unavailable, rather than silently
 // dropped, since it's one of the comparisons this is meant to answer.
 export async function getFeedbackLoop(reelId: string): Promise<FeedbackLoopResult | null> {
-  const allReels = await getReelsWithLatestInsights(); // sorted postedAt desc
+  const [allReels, competitorBaseline] = await Promise.all([
+    getReelsWithLatestInsights(), // sorted postedAt desc
+    getCompetitorBaseline(),
+  ]);
   const index = allReels.findIndex((r) => r.id === reelId);
   if (index === -1) return null;
 
@@ -106,15 +150,7 @@ export async function getFeedbackLoop(reelId: string): Promise<FeedbackLoopResul
       reel.format ? `Same format (${formatLabel(reel.format)})` : "Same format",
       sameFormat
     ),
-    {
-      key: "competitor",
-      label: "Competitor content",
-      sampleSize: 0,
-      avgViews: null,
-      avgEngagementRate: null,
-      avgWatchTimeMs: null,
-      available: false,
-    },
+    competitorBaseline,
   ];
 
   return { reel, baselines };

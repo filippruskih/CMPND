@@ -6,6 +6,7 @@ import {
   ScanSearch,
   TrendingUp,
   User,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import type { IconBadgeColor } from "@/components/icon-badge";
@@ -89,6 +90,18 @@ export const scannerNavItem: NavItem = {
   matchPrefixes: ["/scanner"],
 };
 
+// Reached via a button on the Insights page, not the bottom bar (which is
+// already full) - kept here only so the header title resolves correctly
+// while viewing it.
+export const competitorsNavItem: NavItem = {
+  key: "competitors",
+  title: "Competitors",
+  url: "/competitors",
+  icon: Users,
+  color: "magenta",
+  matchPrefixes: ["/competitors"],
+};
+
 function isItemActive(item: NavItem, pathname: string): boolean {
   return item.matchPrefixes.some((prefix) =>
     prefix === "/" ? pathname === "/" : pathname.startsWith(prefix)
@@ -102,7 +115,7 @@ export function isNavItemActive(item: NavItem, pathname: string): boolean {
 // Used by the header's small "you are here" breadcrumb.
 export function getActiveNavItem(pathname: string): NavItem {
   return (
-    [...bottomNavItems, headerNavItem, scannerNavItem].find((item) =>
+    [...bottomNavItems, headerNavItem, scannerNavItem, competitorsNavItem].find((item) =>
       isItemActive(item, pathname)
     ) ?? bottomNavItems[0]
   );

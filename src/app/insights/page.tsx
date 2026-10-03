@@ -1,5 +1,7 @@
-import { CalendarClock, Dna, Film, Image as ImageIcon, Scale, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import { CalendarClock, Dna, Film, Image as ImageIcon, Scale, TrendingUp, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconBadge } from "@/components/icon-badge";
 import { PageHeader } from "@/components/page-header";
@@ -39,7 +41,16 @@ export default async function InsightsPage() {
         color="aqua"
         title="Insights"
         description="Deterministic growth signals derived from your history - posting cadence, timing, and trend, not AI narrative."
-        action={<ExportButton />}
+        action={
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" asChild>
+              <Link href="/competitors">
+                <Users /> Competitors
+              </Link>
+            </Button>
+            <ExportButton />
+          </div>
+        }
       />
 
       <BestPracticesCard items={bestPractices} />

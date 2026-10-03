@@ -18,16 +18,22 @@ function describeBaseline(baseline: {
   avgViews: number | null;
   avgEngagementRate: number | null;
   avgWatchTimeMs: number | null;
+  isProxyEngagement?: boolean;
 }): string | null {
   if (!baseline.available || baseline.sampleSize === 0) return null;
   const parts: string[] = [];
   if (baseline.avgViews != null) parts.push(`${formatCompactNumber(baseline.avgViews)} avg plays`);
-  if (baseline.avgEngagementRate != null)
-    parts.push(`${formatPercent(baseline.avgEngagementRate)} avg engagement`);
+  if (baseline.avgEngagementRate != null) {
+    parts.push(
+      baseline.isProxyEngagement
+        ? `${formatPercent(baseline.avgEngagementRate)} avg (likes+comments)/followers - NOT the same metric as this reel's reach-based engagement rate, don't compute a direct delta between them`
+        : `${formatPercent(baseline.avgEngagementRate)} avg engagement`
+    );
+  }
   if (baseline.avgWatchTimeMs != null)
     parts.push(`${formatSecondsFromMs(baseline.avgWatchTimeMs)} avg watch time`);
   if (parts.length === 0) return null;
-  return `${baseline.label} (${baseline.sampleSize} reels): ${parts.join(", ")}`;
+  return `${baseline.label} (${baseline.sampleSize} ${baseline.isProxyEngagement ? "posts" : "reels"}): ${parts.join(", ")}`;
 }
 
 // User-triggered (the reel detail page's "Run analysis" / "Regenerate"
