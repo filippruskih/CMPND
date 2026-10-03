@@ -34,6 +34,12 @@ model FollowerSnapshot {
   followerCount Int
   followsCount  Int
   mediaCount    Int
+  // Daily follows_and_unfollows from Instagram's account insights, captured
+  // at sync time. Null when the account has under 100 followers (the
+  // metric isn't returned) or the request fails - this is an addition on
+  // top of the API's own documented limits, not a sync-breaking error.
+  newFollows    Int?
+  newUnfollows  Int?
 }
 
 model Reel {

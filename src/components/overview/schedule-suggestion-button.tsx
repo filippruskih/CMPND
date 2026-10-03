@@ -22,7 +22,7 @@ export function ScheduleSuggestionButton({
   notes,
 }: {
   suggestionId: string;
-  contentType: "reel" | "post";
+  contentType: "reel" | "post" | "story";
   title: string;
   notes: string;
 }) {

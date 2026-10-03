@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatSignedCompactNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,7 @@ export function StatTile({
   deltaGoodDirection = "up",
   icon: Icon,
   color = "blue",
+  footer,
 }: {
   label: string;
   value: string;
@@ -18,6 +20,7 @@ export function StatTile({
   deltaGoodDirection?: "up" | "down";
   icon?: LucideIcon;
   color?: IconBadgeColor;
+  footer?: ReactNode;
 }) {
   const isGood = delta != null && (deltaGoodDirection === "up" ? delta >= 0 : delta <= 0);
 
@@ -38,6 +41,7 @@ export function StatTile({
             {formatSignedCompactNumber(delta)} vs previous sync
           </p>
         )}
+        {footer}
       </CardContent>
     </Card>
   );

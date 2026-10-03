@@ -5,6 +5,8 @@ import { IconBadge } from "@/components/icon-badge";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
 import { MetricLineChart } from "@/components/metric-line-chart";
+import { BackLink } from "@/components/back-link";
+import { MoreToolsMenu } from "@/components/insights/more-tools-menu";
 import { getRetentionOverview, type RetentionLeaderboardItem } from "@/lib/retention";
 import { formatCompactNumber, formatPercent } from "@/lib/format";
 import { formatLabel } from "@/lib/content/classify";
@@ -33,11 +35,13 @@ export default async function RetentionPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
+      <BackLink href="/insights" label="Insights" />
       <PageHeader
         icon={Activity}
         color="aqua"
         title="Retention"
         description="Instagram doesn't expose a per-second retention curve via the API - only average watch time per reel. Everything here is built from that one real number, across your whole account."
+        action={<MoreToolsMenu />}
       />
 
       {!overview ? (

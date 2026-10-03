@@ -7,11 +7,23 @@ import {
   getRecentMedia,
   getReelInsights,
   getPostInsights,
+  getFollowsAndUnfollows,
   type InstagramMedia,
 } from "./client";
 
 const REFRESH_IF_EXPIRING_WITHIN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const MEDIA_FETCH_LIMIT = 100; // combined Reels + Posts, paged in one walk
+
+async function tryGetFollowsAndUnfollows(accessToken: string, igUserId: string) {
+  try {
+    const until = new Date();
+    const since = new Date(until.getTime() - 24 * 60 * 60 * 1000);
+    return await getFollowsAndUnfollows(accessToken, igUserId, since, until);
+  } catch (error) {
+    console.error("Failed to fetch follows_and_unfollows (non-fatal)", error);
+    return null;
+  }
+}
 
 function computeEngagementRate(totalInteractions: number | null, reach: number | null): number | null {
   if (!totalInteractions || !reach) return null;
@@ -151,6 +163,7 @@ export async function runInstagramSync(): Promise<SyncResult> {
   }
 
   const profile = await getProfile(accessToken);
+  const followActivity = await tryGetFollowsAndUnfollows(accessToken, profile.id);
 
   await db.$transaction([
     db.account.update({
@@ -162,6 +175,8 @@ export async function runInstagramSync(): Promise<SyncResult> {
         followerCount: profile.followersCount,
         followsCount: profile.followsCount,
         mediaCount: profile.mediaCount,
+        newFollows: followActivity?.follows ?? null,
+        newUnfollows: followActivity?.unfollows ?? null,
       },
     }),
   ]);

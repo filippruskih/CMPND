@@ -86,12 +86,13 @@ function EntryForm({
             <SelectContent>
               <SelectItem value="reel">Reel</SelectItem>
               <SelectItem value="post">Post</SelectItem>
+              <SelectItem value="story">Story</SelectItem>
             </SelectContent>
           </Select>
         </div>
       )}
       <div className="flex flex-col gap-1.5">
-        <Label>{contentType === "post" ? "Concept" : "Hook"}</Label>
+        <Label>{contentType === "reel" ? "Hook" : "Concept"}</Label>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="What's the idea?" />
       </div>
       <div className="flex flex-col gap-1.5">
@@ -151,7 +152,7 @@ function EntryRow({ dateKey, entry }: { dateKey: string; entry: Entry }) {
       <div className="flex items-start justify-between gap-2">
         <div>
           <Badge variant="outline" className="mb-1">
-            {entry.contentType === "post" ? "Post" : "Reel"}
+            {entry.contentType === "post" ? "Post" : entry.contentType === "story" ? "Story" : "Reel"}
           </Badge>
           <p className="text-sm font-medium">{entry.title}</p>
           {entry.notes && <p className="text-sm text-muted-foreground">{entry.notes}</p>}

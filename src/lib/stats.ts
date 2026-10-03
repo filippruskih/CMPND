@@ -63,6 +63,8 @@ export interface OverviewStats {
   avgEngagementRate: number | null;
   topReel: ReelWithLatestInsight | null;
   reelCount: number;
+  newFollows: number | null;
+  newUnfollows: number | null;
 }
 
 export async function getOverviewStats(): Promise<OverviewStats> {
@@ -115,5 +117,26 @@ export async function getOverviewStats(): Promise<OverviewStats> {
     avgEngagementRate,
     topReel,
     reelCount: reels.length,
+    newFollows: latestSnapshot?.newFollows ?? null,
+    newUnfollows: latestSnapshot?.newUnfollows ?? null,
   };
+}
+
+// Chronological plays-per-reel across the whole account - what "Total
+// plays" on Overview actually drills into when clicked, since the stat
+// itself is a sum rather than something with its own time series.
+export async function getPlaysOverTime(): Promise<{ date: string; value: number }[]> {
+  const reels = await getReelsWithLatestInsights();
+  return reels
+    .filter((r) => r.latestInsight?.views != null)
+    .sort((a, b) => a.postedAt.getTime() - b.postedAt.getTime())
+    .map((r) => ({ date: r.postedAt.toISOString(), value: r.latestInsight!.views! }));
+}
+
+export async function getTopReels(limit = 10): Promise<ReelWithLatestInsight[]> {
+  const reels = await getReelsWithLatestInsights();
+  return [...reels]
+    .filter((r) => r.latestInsight?.views != null)
+    .sort((a, b) => (b.latestInsight!.views ?? 0) - (a.latestInsight!.views ?? 0))
+    .slice(0, limit);
 }

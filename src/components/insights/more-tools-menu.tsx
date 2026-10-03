@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Activity, FlaskConical, MoreHorizontal, Users } from "lucide-react";
+import { Activity, FileText, FlaskConical, MoreHorizontal, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,6 +34,11 @@ export function MoreToolsMenu() {
         <DropdownMenuItem asChild>
           <Link href="/competitors">
             <Users /> Competitors
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/reports">
+            <FileText /> Daily reports
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

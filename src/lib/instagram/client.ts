@@ -35,6 +35,45 @@ export async function getProfile(accessToken: string): Promise<InstagramProfile>
   };
 }
 
+// The follows_and_unfollows metric is only returned once an account has 100+
+// followers, and its availability on Instagram-Login apps (vs the older
+// Facebook-Page-linked Graph API) hasn't been confirmed by hitting a real
+// account yet - callers must treat a failure here as "data unavailable", not
+// a sync-breaking error.
+export interface FollowsAndUnfollows {
+  follows: number;
+  unfollows: number;
+}
+
+export async function getFollowsAndUnfollows(
+  accessToken: string,
+  igUserId: string,
+  since: Date,
+  until: Date
+): Promise<FollowsAndUnfollows | null> {
+  const json = await igFetch(`/${igUserId}/insights`, accessToken, {
+    metric: "follows_and_unfollows",
+    period: "day",
+    metric_type: "total_value",
+    breakdown: "follow_type",
+    since: String(Math.floor(since.getTime() / 1000)),
+    until: String(Math.floor(until.getTime() / 1000)),
+  });
+
+  const results = json.data?.[0]?.total_value?.breakdowns?.[0]?.results;
+  if (!Array.isArray(results)) return null;
+
+  let follows = 0;
+  let unfollows = 0;
+  for (const r of results) {
+    const type = r.dimension_values?.[0];
+    const value = typeof r.value === "number" ? r.value : 0;
+    if (type === "FOLLOWER") follows += value;
+    else if (type === "NON_FOLLOWER") unfollows += value;
+  }
+  return { follows, unfollows };
+}
+
 export interface InstagramMedia {
   id: string;
   mediaType: string;

@@ -7,23 +7,30 @@ import { TopReelCard } from "@/components/overview/top-reel-card";
 import { SuggestionCard } from "@/components/overview/suggestion-card";
 import { IdeaBatchCard } from "@/components/overview/idea-batch-card";
 import { DailyReportCallout } from "@/components/overview/daily-report-callout";
+import { StatTileDialog } from "@/components/overview/stat-tile-dialog";
+import { TopReelsDialog } from "@/components/overview/top-reels-dialog";
 import { db } from "@/lib/db";
-import { getOverviewStats } from "@/lib/stats";
+import { getOverviewStats, getPlaysOverTime, getTopReels } from "@/lib/stats";
 import { getActiveSuggestions } from "@/lib/suggestions";
 import { getLatestIdeaBatch } from "@/lib/idea-batch";
 import { getLatestDailyReport } from "@/lib/daily-reports";
+import { getEngagementTrend } from "@/lib/insights";
 import { formatCompactNumber, formatPercent } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function OverviewPage() {
-  const [stats, suggestions, account, ideaBatch, latestReport] = await Promise.all([
-    getOverviewStats(),
-    getActiveSuggestions(),
-    db.account.findFirst(),
-    getLatestIdeaBatch(),
-    getLatestDailyReport(),
-  ]);
+  const [stats, suggestions, account, ideaBatch, latestReport, playsOverTime, engagementTrend, topReels] =
+    await Promise.all([
+      getOverviewStats(),
+      getActiveSuggestions(),
+      db.account.findFirst(),
+      getLatestIdeaBatch(),
+      getLatestDailyReport(),
+      getPlaysOverTime(),
+      getEngagementTrend(),
+      getTopReels(10),
+    ]);
   const hasData = stats.followerCount != null || stats.reelCount > 0;
 
   return (
@@ -69,6 +76,20 @@ export default async function OverviewPage() {
               color="blue"
               value={stats.followerCount != null ? formatCompactNumber(stats.followerCount) : "-"}
               delta={stats.followerDelta}
+              footer={
+                (stats.newFollows != null || stats.newUnfollows != null) && (
+                  <p className="text-xs text-muted-foreground">
+                    {stats.newFollows != null && (
+                      <span className="text-delta-good">+{stats.newFollows} follows</span>
+                    )}
+                    {stats.newFollows != null && stats.newUnfollows != null && " · "}
+                    {stats.newUnfollows != null && (
+                      <span className="text-destructive">-{stats.newUnfollows} unfollows</span>
+                    )}
+                    {" (24h)"}
+                  </p>
+                )
+              }
             />
             <StatTile
               label="Avg plays / reel"
@@ -76,18 +97,35 @@ export default async function OverviewPage() {
               color="orange"
               value={stats.avgPlays != null ? formatCompactNumber(stats.avgPlays) : "-"}
             />
-            <StatTile
-              label="Total plays"
-              icon={TrendingUp}
-              color="aqua"
-              value={stats.totalPlays != null ? formatCompactNumber(stats.totalPlays) : "-"}
+            <StatTileDialog
+              title="Plays over time"
+              data={playsOverTime}
+              dataKey="plays"
+              label="Plays"
+              trigger={
+                <StatTile
+                  label="Total plays"
+                  icon={TrendingUp}
+                  color="aqua"
+                  value={stats.totalPlays != null ? formatCompactNumber(stats.totalPlays) : "-"}
+                />
+              }
             />
-            <StatTile
-              label="Avg engagement"
-              icon={Zap}
-              color="yellow"
-              value={
-                stats.avgEngagementRate != null ? formatPercent(stats.avgEngagementRate) : "-"
+            <StatTileDialog
+              title="Engagement over time"
+              data={engagementTrend}
+              dataKey="engagement"
+              label="Engagement rate"
+              percent
+              trigger={
+                <StatTile
+                  label="Avg engagement"
+                  icon={Zap}
+                  color="yellow"
+                  value={
+                    stats.avgEngagementRate != null ? formatPercent(stats.avgEngagementRate) : "-"
+                  }
+                />
               }
             />
           </div>
@@ -121,7 +159,9 @@ export default async function OverviewPage() {
                   caption: s.caption,
                 }))}
               />
-              {stats.topReel && <TopReelCard reel={stats.topReel} />}
+              {stats.topReel && (
+                <TopReelsDialog reels={topReels} trigger={<TopReelCard reel={stats.topReel} />} />
+              )}
             </div>
           </div>
 

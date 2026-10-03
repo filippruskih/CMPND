@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ChevronLeft, ChevronRight, Image as ImageIcon, Sparkles, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, CircleDashed, Image as ImageIcon, Sparkles, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -64,16 +64,20 @@ export function SuggestionCard({ suggestions }: { suggestions: Suggestion[] }) {
   }
 
   const isPost = suggestion.type === "post";
+  const isStory = suggestion.type === "story";
+  const usesConceptShape = isPost || isStory;
+  const typeIcon = isPost ? ImageIcon : isStory ? CircleDashed : Sparkles;
+  const typeLabel = isPost ? "Post" : isStory ? "Story" : "Reel";
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <IconBadge icon={isPost ? ImageIcon : Sparkles} color="magenta" size="sm" />
+            <IconBadge icon={typeIcon} color="magenta" size="sm" />
             Today&apos;s suggestion
             <Badge variant="outline" className="font-normal">
-              {isPost ? "Post" : "Reel"}
+              {typeLabel}
             </Badge>
           </CardTitle>
           {suggestions.length > 1 && (
@@ -105,14 +109,16 @@ export function SuggestionCard({ suggestions }: { suggestions: Suggestion[] }) {
         <p className="text-xs text-muted-foreground">{formatDate(suggestion.date)}</p>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {isPost ? (
+        {usesConceptShape ? (
           <>
             <div>
               <p className="text-xs font-medium text-muted-foreground">Concept</p>
               <p className="text-sm font-medium">{suggestion.concept}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-muted-foreground">Caption</p>
+              <p className="text-xs font-medium text-muted-foreground">
+                {isStory ? "On-screen text" : "Caption"}
+              </p>
               <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                 {suggestion.caption}
               </p>
@@ -138,9 +144,9 @@ export function SuggestionCard({ suggestions }: { suggestions: Suggestion[] }) {
           </Button>
           <ScheduleSuggestionButton
             suggestionId={suggestion.id}
-            contentType={isPost ? "post" : "reel"}
-            title={(isPost ? suggestion.concept : suggestion.hook) ?? ""}
-            notes={(isPost ? suggestion.caption : suggestion.script) ?? ""}
+            contentType={isPost ? "post" : isStory ? "story" : "reel"}
+            title={(usesConceptShape ? suggestion.concept : suggestion.hook) ?? ""}
+            notes={(usesConceptShape ? suggestion.caption : suggestion.script) ?? ""}
           />
           <Button size="sm" variant="outline" disabled={pending} onClick={() => setStatus("dismissed")}>
             <X /> Dismiss

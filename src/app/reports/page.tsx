@@ -5,6 +5,8 @@ import { StatTile } from "@/components/stat-tile";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
 import { MetricLineChart } from "@/components/metric-line-chart";
+import { BackLink } from "@/components/back-link";
+import { MoreToolsMenu } from "@/components/insights/more-tools-menu";
 import { getRecentDailyReports, type DailyReportView } from "@/lib/daily-reports";
 import { formatCompactNumber, formatDate, formatPercent } from "@/lib/format";
 
@@ -98,11 +100,13 @@ export default async function ReportsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
+      <BackLink href="/" label="Home" />
       <PageHeader
         icon={FileText}
         color="blue"
         title="Daily reports"
         description="A dated briefing generated every day, synthesizing that day's sync, analytics, trend, idea, and planning results."
+        action={<MoreToolsMenu />}
       />
 
       {reports.length === 0 ? (

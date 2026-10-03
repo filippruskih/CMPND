@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-const VALID_CONTENT_TYPES = new Set(["reel", "post"]);
+const VALID_CONTENT_TYPES = new Set(["reel", "post", "story"]);
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "date is required" }, { status: 400 });
   }
   if (!VALID_CONTENT_TYPES.has(body.contentType)) {
-    return NextResponse.json({ error: "contentType must be 'reel' or 'post'" }, { status: 400 });
+    return NextResponse.json({ error: "contentType must be 'reel', 'post', or 'story'" }, { status: 400 });
   }
   if (!body.title || typeof body.title !== "string") {
     return NextResponse.json({ error: "title is required" }, { status: 400 });
