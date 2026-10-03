@@ -64,7 +64,7 @@ export function MetricLineChart({
 
   return (
     <ChartContainer config={chartConfig} className="w-full" style={{ height }}>
-      <LineChart data={points} margin={{ left: 4, right: 12, top: 8, bottom: 0 }}>
+      <LineChart data={points} margin={{ left: 4, right: 24, top: 8, bottom: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
         <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} />
         <YAxis
