@@ -133,6 +133,24 @@ export async function getPlaysOverTime(): Promise<{ date: string; value: number 
     .map((r) => ({ date: r.postedAt.toISOString(), value: r.latestInsight!.views! }));
 }
 
+const AVG_PLAYS_WINDOW = 5;
+
+// A trailing rolling average rather than raw per-reel views (which would
+// just duplicate the "Total plays" trend) - shows whether the average is
+// trending up or down as new reels land, smoothed over the last few posts.
+export async function getAvgPlaysOverTime(): Promise<{ date: string; value: number }[]> {
+  const reels = await getReelsWithLatestInsights();
+  const withViews = reels
+    .filter((r) => r.latestInsight?.views != null)
+    .sort((a, b) => a.postedAt.getTime() - b.postedAt.getTime());
+
+  return withViews.map((r, i) => {
+    const window = withViews.slice(Math.max(0, i - AVG_PLAYS_WINDOW + 1), i + 1);
+    const avg = window.reduce((sum, w) => sum + w.latestInsight!.views!, 0) / window.length;
+    return { date: r.postedAt.toISOString(), value: avg };
+  });
+}
+
 export async function getTopReels(limit = 10): Promise<ReelWithLatestInsight[]> {
   const reels = await getReelsWithLatestInsights();
   return [...reels]

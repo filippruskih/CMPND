@@ -10,7 +10,7 @@ import { DailyReportCallout } from "@/components/overview/daily-report-callout";
 import { StatTileDialog } from "@/components/overview/stat-tile-dialog";
 import { TopReelsDialog } from "@/components/overview/top-reels-dialog";
 import { db } from "@/lib/db";
-import { getOverviewStats, getPlaysOverTime, getTopReels } from "@/lib/stats";
+import { getOverviewStats, getAvgPlaysOverTime, getPlaysOverTime, getTopReels } from "@/lib/stats";
 import { getActiveSuggestions } from "@/lib/suggestions";
 import { getLatestIdeaBatch } from "@/lib/idea-batch";
 import { getLatestDailyReport } from "@/lib/daily-reports";
@@ -20,7 +20,7 @@ import { formatCompactNumber, formatPercent } from "@/lib/format";
 export const dynamic = "force-dynamic";
 
 export default async function OverviewPage() {
-  const [stats, suggestions, account, ideaBatch, latestReport, playsOverTime, engagementTrend, topReels] =
+  const [stats, suggestions, account, ideaBatch, latestReport, playsOverTime, engagementTrend, topReels, avgPlaysOverTime] =
     await Promise.all([
       getOverviewStats(),
       getActiveSuggestions(),
@@ -30,6 +30,7 @@ export default async function OverviewPage() {
       getPlaysOverTime(),
       getEngagementTrend(),
       getTopReels(10),
+      getAvgPlaysOverTime(),
     ]);
   const hasData = stats.followerCount != null || stats.reelCount > 0;
 
@@ -91,11 +92,19 @@ export default async function OverviewPage() {
                 )
               }
             />
-            <StatTile
-              label="Avg plays / reel"
-              icon={Play}
-              color="orange"
-              value={stats.avgPlays != null ? formatCompactNumber(stats.avgPlays) : "-"}
+            <StatTileDialog
+              title="Avg plays / reel over time"
+              data={avgPlaysOverTime}
+              dataKey="plays"
+              label="Avg plays"
+              trigger={
+                <StatTile
+                  label="Avg plays / reel"
+                  icon={Play}
+                  color="orange"
+                  value={stats.avgPlays != null ? formatCompactNumber(stats.avgPlays) : "-"}
+                />
+              }
             />
             <StatTileDialog
               title="Plays over time"
