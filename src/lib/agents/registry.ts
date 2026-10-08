@@ -29,8 +29,7 @@ export const AGENT_REGISTRY: Record<string, AgentDefinitionConfig> = {
   sync: {
     key: "sync",
     name: "Instagram sync",
-    description:
-      "Pulls your latest reels, posts, follower count, and tracked competitors from Instagram automatically, every day.",
+    description: "Pulls your latest reels, posts, and follower count from Instagram automatically, every day.",
     defaultFrequency: "daily",
     defaultHour: 5,
     run: runSyncAgent,

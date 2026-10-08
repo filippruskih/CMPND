@@ -1,5 +1,4 @@
 import { runInstagramSync } from "@/lib/instagram/sync";
-import { syncAllCompetitors } from "@/lib/instagram/competitor-sync";
 import type { AgentContext } from "@/lib/agents/registry";
 import { AgentSkip } from "@/lib/agents/errors";
 
@@ -10,13 +9,12 @@ import { AgentSkip } from "@/lib/agents/errors";
 export async function runSyncAgent(ctx: AgentContext): Promise<string> {
   await ctx.log("Pulling latest reels, posts, and follower count from Instagram…");
 
-  let summary: string;
   try {
     const result = await runInstagramSync();
     await ctx.log(
       `Synced @${result.username}: ${result.reelsSynced} reels, ${result.postsSynced} posts, ${result.followerCount} followers.`
     );
-    summary = `Synced ${result.reelsSynced} reels and ${result.postsSynced} posts for @${result.username}.`;
+    return `Synced ${result.reelsSynced} reels and ${result.postsSynced} posts for @${result.username}.`;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (message.includes("No Instagram account connected")) {
@@ -24,16 +22,4 @@ export async function runSyncAgent(ctx: AgentContext): Promise<string> {
     }
     throw error;
   }
-
-  await ctx.log("Syncing tracked competitors…");
-  const competitorResult = await syncAllCompetitors();
-  if (competitorResult.synced + competitorResult.failed > 0) {
-    await ctx.log(
-      `Competitors: ${competitorResult.synced} synced, ${competitorResult.failed} failed.`,
-      competitorResult.failed > 0 ? "warn" : "info"
-    );
-    summary += ` Competitors: ${competitorResult.synced} synced${competitorResult.failed > 0 ? `, ${competitorResult.failed} failed` : ""}.`;
-  }
-
-  return summary;
 }

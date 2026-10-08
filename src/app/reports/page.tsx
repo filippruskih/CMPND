@@ -82,9 +82,6 @@ function ReportCard({ report, isLatest }: { report: DailyReportView; isLatest: b
           {stats.openBestPractices > 0 && (
             <Badge variant="outline">{stats.openBestPractices} open recommendation(s)</Badge>
           )}
-          {stats.competitorCount > 0 && (
-            <Badge variant="outline">Tracking {stats.competitorCount} competitor(s)</Badge>
-          )}
         </div>
 
         <p className="whitespace-pre-wrap rounded-lg bg-muted/40 p-4 text-sm leading-relaxed">

@@ -9,7 +9,6 @@ import {
   ScanSearch,
   TrendingUp,
   User,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 import type { IconBadgeColor } from "@/components/icon-badge";
@@ -96,17 +95,6 @@ export const scannerNavItem: NavItem = {
 // Reached via a button on the Insights page, not the bottom bar (which is
 // already full) - kept here only so the header title resolves correctly
 // while viewing it.
-export const competitorsNavItem: NavItem = {
-  key: "competitors",
-  title: "Competitors",
-  url: "/competitors",
-  icon: Users,
-  color: "magenta",
-  matchPrefixes: ["/competitors"],
-};
-
-// Also reached via a button on the Insights page, same reasoning as
-// competitorsNavItem above.
 export const retentionNavItem: NavItem = {
   key: "retention",
   title: "Retention",
@@ -117,7 +105,7 @@ export const retentionNavItem: NavItem = {
 };
 
 // Reached via a callout card on Overview, same reasoning as
-// competitorsNavItem above.
+// retentionNavItem above.
 export const reportsNavItem: NavItem = {
   key: "reports",
   title: "Daily reports",
@@ -128,7 +116,7 @@ export const reportsNavItem: NavItem = {
 };
 
 // Reached via the "More" menu on the Insights page, same reasoning as
-// competitorsNavItem above.
+// retentionNavItem above.
 export const experimentsNavItem: NavItem = {
   key: "experiments",
   title: "Growth experiments",
@@ -155,7 +143,6 @@ export function getActiveNavItem(pathname: string): NavItem {
       ...bottomNavItems,
       headerNavItem,
       scannerNavItem,
-      competitorsNavItem,
       retentionNavItem,
       reportsNavItem,
       experimentsNavItem,

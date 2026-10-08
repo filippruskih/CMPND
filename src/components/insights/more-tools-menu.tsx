@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Activity, FileText, FlaskConical, MoreHorizontal, Users } from "lucide-react";
+import { Activity, FileText, FlaskConical, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,10 +8,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// A menu rather than a growing row of individual buttons - Retention and
-// Competitors already pushed this into "add a 3rd button" territory, and
-// Experiments made it a 4th; consolidating here instead of letting the
-// PageHeader action row keep growing with every new analytics surface.
+// A menu rather than a growing row of individual buttons - consolidating
+// here instead of letting the PageHeader action row keep growing with
+// every new analytics surface.
 export function MoreToolsMenu() {
   return (
     <DropdownMenu>
@@ -29,11 +28,6 @@ export function MoreToolsMenu() {
         <DropdownMenuItem asChild>
           <Link href="/experiments">
             <FlaskConical /> Growth experiments
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/competitors">
-            <Users /> Competitors
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>

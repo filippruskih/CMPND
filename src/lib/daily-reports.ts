@@ -9,7 +9,6 @@ export interface DailyReportStats {
   postsLast30Days: number;
   activeSuggestions: number;
   openBestPractices: number;
-  competitorCount: number;
   followerHistory: { date: string; followers: number }[];
 }
 
@@ -31,7 +30,6 @@ const EMPTY_STATS: DailyReportStats = {
   postsLast30Days: 0,
   activeSuggestions: 0,
   openBestPractices: 0,
-  competitorCount: 0,
   followerHistory: [],
 };
 

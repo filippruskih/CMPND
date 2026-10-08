@@ -24,7 +24,7 @@ const FOLLOWER_SPARKLINE_POINTS = 14;
 export async function runDailyReportAgent(ctx: AgentContext): Promise<string> {
   await ctx.log("Gathering today's numbers…");
 
-  const [stats, consistency, suggestions, ideaBatch, trendRun, openBestPractices, competitorCount] =
+  const [stats, consistency, suggestions, ideaBatch, trendRun, openBestPractices] =
     await Promise.all([
       getOverviewStats(),
       getPostingConsistency(),
@@ -35,7 +35,6 @@ export async function runDailyReportAgent(ctx: AgentContext): Promise<string> {
         orderBy: { startedAt: "desc" },
       }),
       db.bestPractice.count({ where: { status: "open" } }),
-      db.competitor.count(),
     ]);
 
   // Frozen at generation time rather than re-derived when a report is
@@ -50,7 +49,6 @@ export async function runDailyReportAgent(ctx: AgentContext): Promise<string> {
     postsLast30Days: consistency.last30Days,
     activeSuggestions: suggestions.length,
     openBestPractices,
-    competitorCount,
     followerHistory: stats.followerHistory.slice(-FOLLOWER_SPARKLINE_POINTS),
   };
 
@@ -73,7 +71,6 @@ export async function runDailyReportAgent(ctx: AgentContext): Promise<string> {
   );
   if (reportStats.activeSuggestions > 0) factLines.push(`${reportStats.activeSuggestions} active suggestion(s) waiting for you`);
   if (reportStats.openBestPractices > 0) factLines.push(`${reportStats.openBestPractices} open "worth doing" recommendation(s)`);
-  if (reportStats.competitorCount > 0) factLines.push(`Tracking ${reportStats.competitorCount} competitor(s)`);
 
   requireAnthropicKey();
   await ctx.log("Writing today's briefing…");
