@@ -26,9 +26,16 @@ function periodStart(now: Date, def: AgentDefinition): Date | null {
   return null; // "off"
 }
 
+// Poll ticks land on :00/:05/:10 etc, so "due" means the tick closest to
+// the target minute, not an exact match - a straight equality check would
+// skip a target minute that falls between two ticks (e.g. a stale value
+// saved before 5-minute snapping was enforced client-side).
+const POLL_INTERVAL_MINUTES = 5;
+
 function isDue(now: Date, def: AgentDefinition): boolean {
   if (def.frequency === "off") return false;
   if (now.getUTCHours() !== def.hour) return false;
+  if (Math.abs(now.getUTCMinutes() - def.minute) >= POLL_INTERVAL_MINUTES) return false;
   if (def.frequency === "weekly" && now.getUTCDay() !== def.dayOfWeek) return false;
   if (def.frequency === "monthly" && now.getUTCDate() !== def.dayOfMonth) return false;
   return true;

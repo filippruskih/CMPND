@@ -31,8 +31,8 @@ import { cn } from "@/lib/utils";
 import {
   utcToLocal,
   localToUtc,
-  utcHourToLocalHour,
-  localHourToUtcHour,
+  utcTimeToLocalTime,
+  localTimeToUtcTime,
   deviceTimezoneLabel,
 } from "@/lib/schedule-time";
 import { useIsMounted } from "@/lib/use-is-mounted";
@@ -73,6 +73,7 @@ interface AgentData {
   description: string;
   frequency: string;
   hour: number;
+  minute: number;
   dayOfWeek: number;
   dayOfMonth: number;
   runs: RunSummary[];
@@ -114,11 +115,12 @@ function relativeTime(iso: string): string {
   return `${Math.round(hours / 24)}d ago`;
 }
 
-function hourLabel(hour: number): string {
-  const period = hour < 12 ? "AM" : "PM";
+function hourOnlyLabel(hour: number): string {
   const twelveHour = hour % 12 === 0 ? 12 : hour % 12;
-  return `${twelveHour}:00 ${period}`;
+  return String(twelveHour);
 }
+
+const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5);
 
 export function AgentCard({ initial }: { initial: AgentData }) {
   const [agent, setAgent] = useState(initial);
@@ -184,25 +186,30 @@ export function AgentCard({ initial }: { initial: AgentData }) {
   const { icon, color } = AGENT_ICONS[agent.key] ?? { icon: BarChart3, color: "blue" };
   const isOff = agent.frequency === "off";
 
-  // For weekly, hour and day-of-week must be converted together (the day
-  // can shift near midnight). For daily/monthly, only the hour matters -
-  // dayOfMonth is intentionally left unconverted (see schedule-time.ts).
-  const weeklyLocal = mounted ? utcToLocal(agent.hour, agent.dayOfWeek) : { hour: agent.hour, dayOfWeek: agent.dayOfWeek };
-  const simpleLocalHour = mounted ? utcHourToLocalHour(agent.hour) : agent.hour;
-  const displayedHour = agent.frequency === "weekly" ? weeklyLocal.hour : simpleLocalHour;
+  // For weekly, hour/minute and day-of-week must be converted together
+  // (the day can shift near midnight). For daily/monthly, only hour/minute
+  // matter - dayOfMonth is intentionally left unconverted (see
+  // schedule-time.ts).
+  const weeklyLocal = mounted
+    ? utcToLocal(agent.hour, agent.dayOfWeek, agent.minute)
+    : { hour: agent.hour, minute: agent.minute, dayOfWeek: agent.dayOfWeek };
+  const simpleLocal = mounted ? utcTimeToLocalTime(agent.hour, agent.minute) : { hour: agent.hour, minute: agent.minute };
+  const displayedHour = agent.frequency === "weekly" ? weeklyLocal.hour : simpleLocal.hour;
+  const displayedMinute = agent.frequency === "weekly" ? weeklyLocal.minute : simpleLocal.minute;
 
-  function handleHourChange(pickedLocalHour: number) {
+  function handleTimeChange(pickedLocalHour: number, pickedLocalMinute: number) {
     if (agent.frequency === "weekly") {
-      const utc = localToUtc(pickedLocalHour, weeklyLocal.dayOfWeek);
-      updateSchedule({ hour: utc.hour, dayOfWeek: utc.dayOfWeek });
+      const utc = localToUtc(pickedLocalHour, weeklyLocal.dayOfWeek, pickedLocalMinute);
+      updateSchedule({ hour: utc.hour, minute: utc.minute, dayOfWeek: utc.dayOfWeek });
     } else {
-      updateSchedule({ hour: localHourToUtcHour(pickedLocalHour) });
+      const utc = localTimeToUtcTime(pickedLocalHour, pickedLocalMinute);
+      updateSchedule({ hour: utc.hour, minute: utc.minute });
     }
   }
 
   function handleDayOfWeekChange(pickedLocalDay: number) {
-    const utc = localToUtc(weeklyLocal.hour, pickedLocalDay);
-    updateSchedule({ hour: utc.hour, dayOfWeek: utc.dayOfWeek });
+    const utc = localToUtc(weeklyLocal.hour, pickedLocalDay, weeklyLocal.minute);
+    updateSchedule({ hour: utc.hour, minute: utc.minute, dayOfWeek: utc.dayOfWeek });
   }
 
   return (
@@ -258,20 +265,37 @@ export function AgentCard({ initial }: { initial: AgentData }) {
               <span className="text-xs text-muted-foreground">at</span>
               <Select
                 value={String(displayedHour)}
-                onValueChange={(v) => handleHourChange(Number(v))}
+                onValueChange={(v) => handleTimeChange(Number(v), displayedMinute)}
                 disabled={savingSchedule}
               >
-                <SelectTrigger size="sm" className="w-28">
+                <SelectTrigger size="sm" className="w-20">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {Array.from({ length: 24 }).map((_, h) => (
                     <SelectItem key={h} value={String(h)}>
-                      {hourLabel(h)}
+                      {hourOnlyLabel(h)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              <Select
+                value={String(displayedMinute)}
+                onValueChange={(v) => handleTimeChange(displayedHour, Number(v))}
+                disabled={savingSchedule}
+              >
+                <SelectTrigger size="sm" className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {MINUTE_OPTIONS.map((m) => (
+                    <SelectItem key={m} value={String(m)}>
+                      :{String(m).padStart(2, "0")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="text-xs text-muted-foreground">{displayedHour < 12 ? "AM" : "PM"}</span>
               {mounted && (
                 <span className="text-xs text-muted-foreground">{deviceTimezoneLabel()}</span>
               )}

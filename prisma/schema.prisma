@@ -126,6 +126,10 @@ model AgentDefinition {
   // when frequency="monthly".
   frequency   String     @default("daily")
   hour        Int        @default(6)
+  // 5-minute increments only (0, 5, 10, ... 55) - matches the scheduler's
+  // own 5-minute poll granularity (see agents/scheduler.ts), so any value
+  // in between could never actually fire.
+  minute      Int        @default(0)
   dayOfWeek   Int        @default(1)
   dayOfMonth  Int        @default(1)
   createdAt   DateTime   @default(now())

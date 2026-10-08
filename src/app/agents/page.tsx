@@ -46,6 +46,7 @@ export default async function AgentsPage() {
               description: definition.description,
               frequency: definition.frequency,
               hour: definition.hour,
+              minute: definition.minute,
               dayOfWeek: definition.dayOfWeek,
               dayOfMonth: definition.dayOfMonth,
               runs: definition.runs.map((run) => ({

@@ -9,14 +9,22 @@
 // getDay()/getUTCDay() line up with the 0=Sunday..6=Saturday convention
 // used throughout (AgentDefinition.dayOfWeek).
 
-export function utcToLocal(utcHour: number, utcDayOfWeek: number): { hour: number; dayOfWeek: number } {
-  const d = new Date(Date.UTC(2023, 0, 1 + utcDayOfWeek, utcHour));
-  return { hour: d.getHours(), dayOfWeek: d.getDay() };
+export function utcToLocal(
+  utcHour: number,
+  utcDayOfWeek: number,
+  utcMinute = 0
+): { hour: number; minute: number; dayOfWeek: number } {
+  const d = new Date(Date.UTC(2023, 0, 1 + utcDayOfWeek, utcHour, utcMinute));
+  return { hour: d.getHours(), minute: d.getMinutes(), dayOfWeek: d.getDay() };
 }
 
-export function localToUtc(localHour: number, localDayOfWeek: number): { hour: number; dayOfWeek: number } {
-  const d = new Date(2023, 0, 1 + localDayOfWeek, localHour);
-  return { hour: d.getUTCHours(), dayOfWeek: d.getUTCDay() };
+export function localToUtc(
+  localHour: number,
+  localDayOfWeek: number,
+  localMinute = 0
+): { hour: number; minute: number; dayOfWeek: number } {
+  const d = new Date(2023, 0, 1 + localDayOfWeek, localHour, localMinute);
+  return { hour: d.getUTCHours(), minute: d.getUTCMinutes(), dayOfWeek: d.getUTCDay() };
 }
 
 export function utcHourToLocalHour(utcHour: number): number {
@@ -25,6 +33,16 @@ export function utcHourToLocalHour(utcHour: number): number {
 
 export function localHourToUtcHour(localHour: number): number {
   return new Date(2023, 0, 1, localHour).getUTCHours();
+}
+
+export function utcTimeToLocalTime(utcHour: number, utcMinute: number): { hour: number; minute: number } {
+  const d = new Date(Date.UTC(2023, 0, 1, utcHour, utcMinute));
+  return { hour: d.getHours(), minute: d.getMinutes() };
+}
+
+export function localTimeToUtcTime(localHour: number, localMinute: number): { hour: number; minute: number } {
+  const d = new Date(2023, 0, 1, localHour, localMinute);
+  return { hour: d.getUTCHours(), minute: d.getUTCMinutes() };
 }
 
 export function deviceTimezoneLabel(): string {

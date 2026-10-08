@@ -78,16 +78,9 @@ export default async function OverviewPage() {
               value={stats.followerCount != null ? formatCompactNumber(stats.followerCount) : "-"}
               delta={stats.followerDelta}
               footer={
-                (stats.newFollows != null || stats.newUnfollows != null) && (
-                  <p className="text-xs text-muted-foreground">
-                    {stats.newFollows != null && (
-                      <span className="text-delta-good">+{stats.newFollows} follows</span>
-                    )}
-                    {stats.newFollows != null && stats.newUnfollows != null && " · "}
-                    {stats.newUnfollows != null && (
-                      <span className="text-destructive">-{stats.newUnfollows} unfollows</span>
-                    )}
-                    {" (24h)"}
+                stats.newUnfollows != null && (
+                  <p className="text-xs font-medium text-destructive">
+                    -{stats.newUnfollows} unfollows (24h)
                   </p>
                 )
               }

@@ -33,6 +33,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ ke
   const data: {
     frequency?: string;
     hour?: number;
+    minute?: number;
     dayOfWeek?: number;
     dayOfMonth?: number;
   } = {};
@@ -49,6 +50,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ ke
       return NextResponse.json({ error: "hour must be 0-23" }, { status: 400 });
     }
     data.hour = hour;
+  }
+  if ("minute" in body) {
+    const minute = Number(body.minute);
+    if (!Number.isInteger(minute) || minute < 0 || minute > 55 || minute % 5 !== 0) {
+      return NextResponse.json({ error: "minute must be 0-55 in steps of 5" }, { status: 400 });
+    }
+    data.minute = minute;
   }
   if ("dayOfWeek" in body) {
     const dayOfWeek = Number(body.dayOfWeek);

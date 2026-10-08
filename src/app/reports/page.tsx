@@ -71,7 +71,7 @@ function ReportCard({ report, isLatest }: { report: DailyReportView; isLatest: b
             data={stats.followerHistory.map((h) => ({ date: h.date, value: h.followers }))}
             dataKey="followers"
             label="Followers"
-            height={120}
+            height={70}
           />
         )}
 
