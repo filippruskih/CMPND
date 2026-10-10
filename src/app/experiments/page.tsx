@@ -1,8 +1,7 @@
 import { FlaskConical } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
-import { BackLink } from "@/components/back-link";
-import { MoreToolsMenu } from "@/components/insights/more-tools-menu";
+import { InsightsTabs } from "@/components/insights/insights-tabs";
 import { ExperimentCard } from "@/components/experiments/experiment-card";
 import { getAllExperiments } from "@/lib/growth-experiments";
 
@@ -14,14 +13,14 @@ export default async function ExperimentsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <BackLink href="/insights" label="Insights" />
       <PageHeader
         icon={FlaskConical}
         color="magenta"
         title="Growth experiments"
         description="Preset breakdowns across your entire history, not just new content - no creator-declared hypotheses to set up, and no minimum sample size, so low-confidence groups are still shown with their real count rather than hidden."
-        action={<MoreToolsMenu />}
       />
+
+      <InsightsTabs active="experiments" />
 
       {!hasAnyData ? (
         <EmptyState

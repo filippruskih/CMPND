@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/empty-state";
 import { MetricLineChart } from "@/components/metric-line-chart";
 import { ExportButton } from "@/components/export-button";
 import { BestPracticesCard } from "@/components/insights/best-practices-card";
-import { MoreToolsMenu } from "@/components/insights/more-tools-menu";
+import { InsightsTabs } from "@/components/insights/insights-tabs";
 import {
   getBestDayToPost,
   getContentMixComparison,
@@ -40,13 +40,10 @@ export default async function InsightsPage() {
         color="aqua"
         title="Insights"
         description="Deterministic growth signals derived from your history - posting cadence, timing, and trend, not AI narrative."
-        action={
-          <div className="flex flex-wrap items-center justify-end gap-2">
-            <MoreToolsMenu />
-            <ExportButton />
-          </div>
-        }
+        action={<ExportButton />}
       />
+
+      <InsightsTabs active="overview" />
 
       <BestPracticesCard items={bestPractices} />
 

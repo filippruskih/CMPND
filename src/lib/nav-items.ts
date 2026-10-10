@@ -92,7 +92,7 @@ export const scannerNavItem: NavItem = {
   matchPrefixes: ["/scanner"],
 };
 
-// Reached via a button on the Insights page, not the bottom bar (which is
+// Reached via the InsightsTabs switcher, not the bottom bar (which is
 // already full) - kept here only so the header title resolves correctly
 // while viewing it.
 export const retentionNavItem: NavItem = {
@@ -115,7 +115,7 @@ export const reportsNavItem: NavItem = {
   matchPrefixes: ["/reports"],
 };
 
-// Reached via the "More" menu on the Insights page, same reasoning as
+// Reached via the InsightsTabs switcher, same reasoning as
 // retentionNavItem above.
 export const experimentsNavItem: NavItem = {
   key: "experiments",

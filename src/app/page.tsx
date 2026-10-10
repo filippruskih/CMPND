@@ -78,9 +78,13 @@ export default async function OverviewPage() {
               value={stats.followerCount != null ? formatCompactNumber(stats.followerCount) : "-"}
               delta={stats.followerDelta}
               footer={
-                stats.newUnfollows != null && (
+                stats.newUnfollows != null ? (
                   <p className="text-xs font-medium text-destructive">
                     -{stats.newUnfollows} unfollows (24h)
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Unfollows appear after your next sync
                   </p>
                 )
               }
