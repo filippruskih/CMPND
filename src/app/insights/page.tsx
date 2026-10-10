@@ -230,7 +230,9 @@ export default async function InsightsPage() {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-wrap text-sm">{dnaProfile.narrative}</p>
+                  <p className="max-w-3xl text-pretty whitespace-pre-wrap text-sm leading-relaxed">
+                    {dnaProfile.narrative}
+                  </p>
                 </CardContent>
               </Card>
 

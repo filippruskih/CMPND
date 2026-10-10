@@ -34,8 +34,8 @@ export function IconBadge({
         className
       )}
       style={{
-        background: `color-mix(in oklab, ${ICON_COLORS[color]} 22%, white)`,
-        color: `color-mix(in oklab, ${ICON_COLORS[color]} 85%, black 8%)`,
+        background: `color-mix(in oklab, ${ICON_COLORS[color]} 26%, white)`,
+        color: `color-mix(in oklab, ${ICON_COLORS[color]} 88%, black 8%)`,
       }}
     >
       <Icon className={size === "sm" ? "size-4" : "size-5"} strokeWidth={2.25} />

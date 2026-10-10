@@ -32,10 +32,10 @@ function BestPracticeRow({ item }: { item: BestPractice }) {
   }
 
   return (
-    <div className="flex flex-col gap-2 border-b pb-3 last:border-b-0 last:pb-0">
+    <div className="flex flex-col gap-2.5 rounded-xl bg-muted/40 p-4">
       <div>
-        <p className="text-sm font-medium">{item.title}</p>
-        <p className="text-sm text-muted-foreground">{item.description}</p>
+        <p className="text-sm font-semibold text-balance">{item.title}</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
       </div>
       <div className="flex gap-2">
         <Button size="sm" variant="outline" disabled={pending} onClick={() => setStatus("done")}>

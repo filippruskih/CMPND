@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, ExternalLink, LogOut, User, XCircle } from "lucide-react";
+import { CheckCircle2, ExternalLink, Film, Image as ImageIcon, LogOut, User, Users, XCircle } from "lucide-react";
 import { db } from "@/lib/db";
 import { instagramConfig } from "@/lib/instagram/config";
 import { isAuthEnabled } from "@/lib/auth";
@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PageHeader } from "@/components/page-header";
+import { StatTile } from "@/components/stat-tile";
 import { SyncButton } from "@/components/settings/sync-button";
+import { formatCompactNumber } from "@/lib/format";
 
 export default async function ProfilePage({
   searchParams,
@@ -17,7 +19,12 @@ export default async function ProfilePage({
   searchParams: Promise<{ connected?: string; error?: string }>;
 }) {
   const { connected, error } = await searchParams;
-  const account = await db.account.findFirst();
+  const [account, reelCount, postCount, latestSnapshot] = await Promise.all([
+    db.account.findFirst(),
+    db.reel.count(),
+    db.post.count(),
+    db.followerSnapshot.findFirst({ orderBy: { capturedAt: "desc" } }),
+  ]);
   const configured = instagramConfig.isConfigured();
 
   return (
@@ -28,6 +35,19 @@ export default async function ProfilePage({
         title="Profile"
         description="Connect your Instagram account and manage sync."
       />
+
+      {account && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatTile
+            label="Followers"
+            icon={Users}
+            color="blue"
+            value={latestSnapshot ? formatCompactNumber(latestSnapshot.followerCount) : "-"}
+          />
+          <StatTile label="Reels synced" icon={Film} color="orange" value={String(reelCount)} />
+          <StatTile label="Posts synced" icon={ImageIcon} color="magenta" value={String(postCount)} />
+        </div>
+      )}
 
       {connected && (
         <Alert>
