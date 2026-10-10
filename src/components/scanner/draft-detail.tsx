@@ -23,6 +23,13 @@ interface DraftData {
 }
 
 const POLL_INTERVAL_MS = 2500;
+const METRIC_COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+];
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -91,7 +98,7 @@ export function DraftDetail({ initial }: { initial: DraftData }) {
         src={`/api/drafts/${draft.id}/video`}
         controls
         playsInline
-        className="max-h-[70vh] w-full rounded-lg bg-black"
+        className="max-h-[70vh] w-full rounded-2xl bg-black shadow-[0_16px_32px_-16px_rgba(20,20,10,0.4)]"
       />
 
       {isPending && (
@@ -134,7 +141,9 @@ export function DraftDetail({ initial }: { initial: DraftData }) {
               <CopyButton text={draft.analysis.hook} />
             </CardHeader>
             <CardContent>
-              <p className="text-sm">{draft.analysis.hook}</p>
+              <div className="rounded-xl bg-muted/50 p-3.5">
+                <p className="text-base leading-snug font-semibold text-balance">{draft.analysis.hook}</p>
+              </div>
             </CardContent>
           </Card>
 
@@ -144,7 +153,11 @@ export function DraftDetail({ initial }: { initial: DraftData }) {
               <CopyButton text={draft.analysis.caption} />
             </CardHeader>
             <CardContent>
-              <p className="whitespace-pre-wrap text-sm">{draft.analysis.caption}</p>
+              <div className="rounded-xl bg-muted/50 p-3.5">
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/85">
+                  {draft.analysis.caption}
+                </p>
+              </div>
             </CardContent>
           </Card>
 
@@ -153,14 +166,21 @@ export function DraftDetail({ initial }: { initial: DraftData }) {
               <CardTitle className="text-base">What to change or add</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
-              {draft.analysis.breakdown.map((item, i) => (
-                <div key={i} className="flex flex-col gap-1 border-l-2 pl-3">
-                  <Badge variant="outline" className="w-fit">
-                    {item.area}
-                  </Badge>
-                  <p className="text-sm text-muted-foreground">{item.suggestion}</p>
-                </div>
-              ))}
+              {draft.analysis.breakdown.map((item, i) => {
+                const color = METRIC_COLORS[i % METRIC_COLORS.length];
+                return (
+                  <div
+                    key={i}
+                    className="flex flex-col gap-1 rounded-r-lg border-l-[3px] bg-muted/30 py-2 pr-3 pl-3"
+                    style={{ borderColor: color }}
+                  >
+                    <Badge variant="outline" className="w-fit">
+                      {item.area}
+                    </Badge>
+                    <p className="text-sm text-muted-foreground">{item.suggestion}</p>
+                  </div>
+                );
+              })}
             </CardContent>
           </Card>
         </div>

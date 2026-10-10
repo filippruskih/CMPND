@@ -32,21 +32,31 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
         <p className="text-sm text-muted-foreground">How this reel compares to your history.</p>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl bg-muted/30">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Baseline</TableHead>
-                <TableHead className="text-right">Sample</TableHead>
-                <TableHead className="text-right">Plays vs baseline</TableHead>
-                <TableHead className="text-right">Engagement vs baseline</TableHead>
-                <TableHead className="text-right">Baseline avg watch</TableHead>
+              <TableRow className="border-b-0 hover:bg-transparent">
+                <TableHead className="pl-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  Baseline
+                </TableHead>
+                <TableHead className="text-right text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  Sample
+                </TableHead>
+                <TableHead className="text-right text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  Plays vs baseline
+                </TableHead>
+                <TableHead className="text-right text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  Engagement vs baseline
+                </TableHead>
+                <TableHead className="pr-3 text-right text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  Baseline avg watch
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {feedback.baselines.map((baseline) => (
-                <TableRow key={baseline.key}>
-                  <TableCell className="whitespace-normal">{baseline.label}</TableCell>
+                <TableRow key={baseline.key} className="border-border/60">
+                  <TableCell className="pl-3 font-medium whitespace-normal">{baseline.label}</TableCell>
                   <TableCell className="text-right tabular-nums text-muted-foreground">
                     {baseline.available ? baseline.sampleSize : "-"}
                   </TableCell>
@@ -71,7 +81,7 @@ export function FeedbackPanel({ feedback }: { feedback: FeedbackLoopResult }) {
                       />
                     )}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-muted-foreground">
+                  <TableCell className="pr-3 text-right tabular-nums text-muted-foreground">
                     {baseline.avgWatchTimeMs != null
                       ? formatSecondsFromMs(baseline.avgWatchTimeMs)
                       : "-"}

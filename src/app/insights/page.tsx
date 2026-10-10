@@ -1,4 +1,4 @@
-import { CalendarClock, Dna, Film, Image as ImageIcon, Scale, TrendingUp } from "lucide-react";
+import { CalendarClock, Dna, Film, Image as ImageIcon, Scale, TrendingUp, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconBadge } from "@/components/icon-badge";
@@ -69,18 +69,18 @@ export default async function InsightsPage() {
             <CardContent className="flex flex-col gap-2">
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div>
-                  <p className="text-2xl font-semibold">{consistency.last7Days}</p>
-                  <p className="text-xs text-muted-foreground">last 7 days</p>
+                  <p className="text-3xl font-semibold tracking-tight">{consistency.last7Days}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">last 7 days</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold">{consistency.last30Days}</p>
-                  <p className="text-xs text-muted-foreground">last 30 days</p>
+                  <p className="text-3xl font-semibold tracking-tight">{consistency.last30Days}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">last 30 days</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold">
+                  <p className="text-3xl font-semibold tracking-tight">
                     {consistency.daysSinceLastPost ?? "-"}
                   </p>
-                  <p className="text-xs text-muted-foreground">days since last post</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">days since last post</p>
                 </div>
               </div>
             </CardContent>
@@ -99,14 +99,21 @@ export default async function InsightsPage() {
                   Not enough data yet - need at least 5 posted items with insights.
                 </p>
               ) : (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1.5">
                   {bestDays.map((d, i) => (
-                    <div key={d.day} className="flex items-center justify-between text-sm">
-                      <span className={i === 0 ? "font-medium" : "text-muted-foreground"}>
-                        {i === 0 && "🏆 "}
-                        {d.day}
+                    <div
+                      key={d.day}
+                      className={
+                        i === 0
+                          ? "flex items-center justify-between gap-2 rounded-lg bg-[color-mix(in_oklab,var(--chart-2)_12%,transparent)] px-2.5 py-1.5 text-sm"
+                          : "flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm"
+                      }
+                    >
+                      <span className="flex items-center gap-1.5">
+                        {i === 0 && <Trophy className="size-3.5 text-[var(--chart-2)]" />}
+                        <span className={i === 0 ? "font-semibold" : "text-muted-foreground"}>{d.day}</span>
                       </span>
-                      <span className="text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         {formatPercent(d.avgEngagementRate)} avg · {d.count} item
                         {d.count === 1 ? "" : "s"}
                       </span>
@@ -150,38 +157,46 @@ export default async function InsightsPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2 rounded-md border p-4">
+                <div className="flex flex-col gap-2 rounded-xl bg-muted/50 p-4">
                   <div className="flex items-center gap-2">
                     <Film className="size-4 text-muted-foreground" />
                     <span className="font-medium">Reels</span>
-                    <Badge variant="outline">{mix.reels.count}</Badge>
+                    <Badge variant="secondary">{mix.reels.count}</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     Avg reach:{" "}
-                    {mix.reels.avgReach != null ? formatCompactNumber(mix.reels.avgReach) : "-"}
+                    <span className="font-medium text-foreground">
+                      {mix.reels.avgReach != null ? formatCompactNumber(mix.reels.avgReach) : "-"}
+                    </span>
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Avg engagement:{" "}
-                    {mix.reels.avgEngagementRate != null
-                      ? formatPercent(mix.reels.avgEngagementRate)
-                      : "-"}
+                    <span className="font-medium text-foreground">
+                      {mix.reels.avgEngagementRate != null
+                        ? formatPercent(mix.reels.avgEngagementRate)
+                        : "-"}
+                    </span>
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 rounded-md border p-4">
+                <div className="flex flex-col gap-2 rounded-xl bg-muted/50 p-4">
                   <div className="flex items-center gap-2">
                     <ImageIcon className="size-4 text-muted-foreground" />
                     <span className="font-medium">Posts</span>
-                    <Badge variant="outline">{mix.posts.count}</Badge>
+                    <Badge variant="secondary">{mix.posts.count}</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     Avg reach:{" "}
-                    {mix.posts.avgReach != null ? formatCompactNumber(mix.posts.avgReach) : "-"}
+                    <span className="font-medium text-foreground">
+                      {mix.posts.avgReach != null ? formatCompactNumber(mix.posts.avgReach) : "-"}
+                    </span>
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Avg engagement:{" "}
-                    {mix.posts.avgEngagementRate != null
-                      ? formatPercent(mix.posts.avgEngagementRate)
-                      : "-"}
+                    <span className="font-medium text-foreground">
+                      {mix.posts.avgEngagementRate != null
+                        ? formatPercent(mix.posts.avgEngagementRate)
+                        : "-"}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -190,7 +205,7 @@ export default async function InsightsPage() {
         </div>
       )}
 
-      <div className="mt-4 border-t pt-8">
+      <div className="mt-6 border-t border-foreground/[0.06] pt-8">
         <PageHeader
           icon={Dna}
           color="aqua"

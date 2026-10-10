@@ -74,9 +74,13 @@ export function DmThreadCard({ thread }: { thread: DmThread }) {
         )}
 
         {thread.draftReply && (
-          <div>
-            <p className="text-xs font-medium text-muted-foreground">Suggested reply</p>
-            <p className="whitespace-pre-wrap text-sm">{thread.draftReply}</p>
+          <div className="rounded-xl bg-muted/50 p-3.5">
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              Suggested reply
+            </p>
+            <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/85">
+              {thread.draftReply}
+            </p>
           </div>
         )}
 

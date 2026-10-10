@@ -5,10 +5,11 @@ import { ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DetailMetric } from "@/components/detail-metric";
 import { MetricLineChart } from "@/components/metric-line-chart";
 import { BackLink } from "@/components/back-link";
 import { getPostDetail, mediaTypeLabel } from "@/lib/posts";
-import { formatCompactNumber, formatDate, formatPercent } from "@/lib/format";
+import { formatDate, formatPercent } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ export default async function PostDetailPage({
       <BackLink href="/posts" label="Posts" />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         {post.thumbnailUrl && (
-          <div className="relative h-48 w-48 shrink-0 overflow-hidden rounded-md bg-muted">
+          <div className="relative h-48 w-48 shrink-0 overflow-hidden rounded-xl bg-muted shadow-[0_10px_24px_-12px_rgba(20,20,10,0.35)]">
             <Image src={post.thumbnailUrl} alt="" fill sizes="192px" className="object-cover" />
           </div>
         )}
@@ -57,15 +58,16 @@ export default async function PostDetailPage({
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Metric label="Plays" value={insight?.views} />
-        <Metric label="Reach" value={insight?.reach} />
-        <Metric label="Likes" value={insight?.likes} />
-        <Metric label="Comments" value={insight?.comments} />
-        <Metric label="Shares" value={insight?.shares} />
-        <Metric label="Saves" value={insight?.saved} />
-        <Metric
+        <DetailMetric label="Plays" value={insight?.views} index={0} />
+        <DetailMetric label="Reach" value={insight?.reach} index={1} />
+        <DetailMetric label="Likes" value={insight?.likes} index={2} />
+        <DetailMetric label="Comments" value={insight?.comments} index={3} />
+        <DetailMetric label="Shares" value={insight?.shares} index={4} />
+        <DetailMetric label="Saves" value={insight?.saved} index={0} />
+        <DetailMetric
           label="Engagement"
           value={insight?.engagementRate}
+          index={1}
           format={(v) => formatPercent(v)}
         />
       </div>
@@ -81,24 +83,5 @@ export default async function PostDetailPage({
         </Card>
       )}
     </div>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  format = (v: number) => formatCompactNumber(v),
-}: {
-  label: string;
-  value: number | null | undefined;
-  format?: (value: number) => string;
-}) {
-  return (
-    <Card>
-      <CardContent className="flex flex-col gap-1">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="text-xl font-semibold">{value != null ? format(value) : "-"}</p>
-      </CardContent>
-    </Card>
   );
 }

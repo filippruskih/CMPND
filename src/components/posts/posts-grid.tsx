@@ -18,7 +18,7 @@ export function PostsGrid({ posts }: { posts: PostWithLatestInsight[] }) {
           >
             <CardContent className="flex flex-1 flex-col gap-3">
               <Link href={`/posts/${post.id}`} className="group flex flex-col gap-3">
-                <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted">
+                <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted">
                   {post.thumbnailUrl ? (
                     <Image
                       src={post.thumbnailUrl}

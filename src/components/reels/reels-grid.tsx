@@ -17,7 +17,7 @@ export function ReelsGrid({ reels }: { reels: ReelWithLatestInsight[] }) {
           >
             <CardContent className="flex flex-1 flex-col gap-3">
               <Link href={`/reels/${reel.id}`} className="group flex flex-col gap-3">
-                <div className="relative aspect-9/16 w-full overflow-hidden rounded-lg bg-muted">
+                <div className="relative aspect-9/16 w-full overflow-hidden rounded-xl bg-muted">
                   {reel.thumbnailUrl ? (
                     <Image
                       src={reel.thumbnailUrl}

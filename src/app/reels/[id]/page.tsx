@@ -5,6 +5,7 @@ import { ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DetailMetric } from "@/components/detail-metric";
 import { MetricLineChart } from "@/components/metric-line-chart";
 import { FeedbackPanel } from "@/components/reels/feedback-panel";
 import { ReelPerformanceCard } from "@/components/reels/reel-performance-card";
@@ -15,7 +16,7 @@ import { getReelDetail } from "@/lib/stats";
 import { getFeedbackLoop } from "@/lib/feedback";
 import { getAllSeries } from "@/lib/series";
 import { formatLabel } from "@/lib/content/classify";
-import { formatCompactNumber, formatDate, formatPercent, formatSecondsFromMs } from "@/lib/format";
+import { formatDate, formatPercent, formatSecondsFromMs } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -42,8 +43,8 @@ export default async function ReelDetailPage({
       <BackLink href="/reels" label="Reels" />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         {reel.thumbnailUrl && (
-          <div className="relative h-48 w-32 shrink-0 overflow-hidden rounded-md bg-muted">
-            <Image src={reel.thumbnailUrl} alt="" fill sizes="128px" className="object-cover" />
+          <div className="relative h-52 w-35 shrink-0 overflow-hidden rounded-xl bg-muted shadow-[0_10px_24px_-12px_rgba(20,20,10,0.35)]">
+            <Image src={reel.thumbnailUrl} alt="" fill sizes="140px" className="object-cover" />
           </div>
         )}
         <div className="flex flex-1 flex-col gap-2">
@@ -76,25 +77,28 @@ export default async function ReelDetailPage({
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Metric label="Plays" value={insight?.views} />
-        <Metric label="Reach" value={insight?.reach} />
-        <Metric label="Likes" value={insight?.likes} />
-        <Metric label="Comments" value={insight?.comments} />
-        <Metric label="Shares" value={insight?.shares} />
-        <Metric label="Saves" value={insight?.saved} />
-        <Metric
+        <DetailMetric label="Plays" value={insight?.views} index={0} />
+        <DetailMetric label="Reach" value={insight?.reach} index={1} />
+        <DetailMetric label="Likes" value={insight?.likes} index={2} />
+        <DetailMetric label="Comments" value={insight?.comments} index={3} />
+        <DetailMetric label="Shares" value={insight?.shares} index={4} />
+        <DetailMetric label="Saves" value={insight?.saved} index={0} />
+        <DetailMetric
           label="Engagement"
           value={insight?.engagementRate}
+          index={1}
           format={(v) => formatPercent(v)}
         />
-        <Metric
+        <DetailMetric
           label="Avg watch time"
           value={insight?.avgWatchTimeMs}
+          index={2}
           format={(v) => formatSecondsFromMs(v)}
         />
-        <Metric
+        <DetailMetric
           label="Reel length"
           value={reel.durationMs}
+          index={3}
           format={(v) => formatSecondsFromMs(v)}
         />
       </div>
@@ -135,24 +139,5 @@ export default async function ReelDetailPage({
 
       {feedback && <FeedbackPanel feedback={feedback} />}
     </div>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  format = (v: number) => formatCompactNumber(v),
-}: {
-  label: string;
-  value: number | null | undefined;
-  format?: (value: number) => string;
-}) {
-  return (
-    <Card>
-      <CardContent className="flex flex-col gap-1">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="text-xl font-semibold">{value != null ? format(value) : "-"}</p>
-      </CardContent>
-    </Card>
   );
 }

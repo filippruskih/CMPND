@@ -17,7 +17,7 @@ function LeaderboardRow({ item }: { item: RetentionLeaderboardItem }) {
   return (
     <Link
       href={`/reels/${item.id}`}
-      className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted/60"
+      className="flex items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors hover:bg-muted/60"
     >
       <span className="line-clamp-1 flex-1">{item.caption ?? "No caption"}</span>
       <span className="shrink-0 text-xs text-muted-foreground">
@@ -57,7 +57,7 @@ export default async function RetentionPage() {
             <Card>
               <CardContent className="flex flex-col gap-1">
                 <p className="text-sm text-muted-foreground">Average retention</p>
-                <p className="text-2xl font-semibold">{formatPercent(overview.overallAvgRetention)}</p>
+                <p className="text-3xl font-semibold tracking-tight">{formatPercent(overview.overallAvgRetention)}</p>
                 <p className="text-xs text-muted-foreground">
                   Across {overview.sampleSize} reels with both length and watch-time data
                 </p>
@@ -71,7 +71,7 @@ export default async function RetentionPage() {
                   overview.reachCorrelation.lowRetentionAvgReach != null &&
                   overview.reachCorrelation.lowRetentionAvgReach > 0 ? (
                     <>
-                      <p className="text-2xl font-semibold">
+                      <p className="text-3xl font-semibold tracking-tight">
                         {(
                           overview.reachCorrelation.highRetentionAvgReach /
                           overview.reachCorrelation.lowRetentionAvgReach
