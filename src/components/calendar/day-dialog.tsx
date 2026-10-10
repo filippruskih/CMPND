@@ -217,7 +217,7 @@ export function DayDialog({
               {published.map((p) => (
                 <div key={p.id} className="flex items-center gap-3 rounded-lg border p-2">
                   {p.thumbnailUrl && (
-                    <div className="relative size-12 shrink-0 overflow-hidden rounded-md bg-muted">
+                    <div className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-muted">
                       <Image src={p.thumbnailUrl} alt="" fill sizes="48px" className="object-cover" />
                     </div>
                   )}

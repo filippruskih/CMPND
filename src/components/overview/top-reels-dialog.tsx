@@ -38,7 +38,7 @@ export function TopReelsDialog({ trigger, reels }: { trigger: ReactNode; reels: 
               >
                 <span className="w-5 shrink-0 text-sm text-muted-foreground tabular-nums">{i + 1}</span>
                 {reel.thumbnailUrl && (
-                  <div className="relative size-10 shrink-0 overflow-hidden rounded-md bg-muted">
+                  <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-muted">
                     <Image src={reel.thumbnailUrl} alt="" fill sizes="40px" className="object-cover" />
                   </div>
                 )}

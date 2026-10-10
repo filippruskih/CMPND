@@ -15,7 +15,7 @@ const TABS = [
 // feel like tabs of one section instead of unrelated destinations.
 export function ContentTabs({ active }: { active: (typeof TABS)[number]["key"] }) {
   return (
-    <div className="flex w-full gap-1 overflow-x-auto rounded-lg bg-muted p-1 sm:w-fit">
+    <div className="flex w-full gap-1 overflow-x-auto rounded-xl bg-muted p-1 sm:w-fit">
       {TABS.map((tab) => {
         const isActive = tab.key === active;
         return (
@@ -23,7 +23,7 @@ export function ContentTabs({ active }: { active: (typeof TABS)[number]["key"] }
             key={tab.key}
             href={tab.href}
             className={cn(
-              "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+              "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
               isActive
                 ? "bg-background text-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"

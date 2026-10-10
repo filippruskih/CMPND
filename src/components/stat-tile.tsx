@@ -25,9 +25,9 @@ export function StatTile({
   const isGood = delta != null && (deltaGoodDirection === "up" ? delta >= 0 : delta <= 0);
 
   return (
-    <Card className="relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md">
+    <Card className="relative overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_2px_4px_rgba(20,20,10,0.05),0_20px_36px_-16px_rgba(20,20,10,0.2)]">
       <div
-        className="absolute inset-x-0 top-0 h-0.5"
+        className="absolute inset-x-0 top-0 h-1"
         style={{ background: `linear-gradient(90deg, transparent, ${ICON_COLORS[color]}, transparent)` }}
       />
       <CardContent className="flex flex-col gap-3">
@@ -35,7 +35,7 @@ export function StatTile({
           <p className="text-sm font-medium text-muted-foreground">{label}</p>
           {Icon && <IconBadge icon={Icon} color={color} size="sm" />}
         </div>
-        <p className="text-3xl font-semibold tracking-tight tabular-nums">{value}</p>
+        <p className="text-4xl font-semibold tracking-tight tabular-nums">{value}</p>
         {delta != null && (
           <p className={cn("text-xs font-medium", isGood ? "text-delta-good" : "text-destructive")}>
             {formatSignedCompactNumber(delta)} vs previous sync

@@ -108,18 +108,18 @@ export function SuggestionCard({ suggestions }: { suggestions: Suggestion[] }) {
         </div>
         <p className="text-xs text-muted-foreground">{formatDate(suggestion.date)}</p>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-4">
         {usesConceptShape ? (
           <>
             <div>
-              <p className="text-xs font-medium text-muted-foreground">Concept</p>
-              <p className="text-sm font-medium">{suggestion.concept}</p>
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Concept</p>
+              <p className="mt-1 text-base leading-snug font-semibold text-balance">{suggestion.concept}</p>
             </div>
-            <div>
-              <p className="text-xs font-medium text-muted-foreground">
+            <div className="rounded-xl bg-muted/50 p-3.5">
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 {isStory ? "On-screen text" : "Caption"}
               </p>
-              <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+              <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/80">
                 {suggestion.caption}
               </p>
             </div>
@@ -127,12 +127,12 @@ export function SuggestionCard({ suggestions }: { suggestions: Suggestion[] }) {
         ) : (
           <>
             <div>
-              <p className="text-xs font-medium text-muted-foreground">Hook</p>
-              <p className="text-sm font-medium">{suggestion.hook}</p>
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Hook</p>
+              <p className="mt-1 text-base leading-snug font-semibold text-balance">{suggestion.hook}</p>
             </div>
-            <div>
-              <p className="text-xs font-medium text-muted-foreground">Script</p>
-              <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+            <div className="rounded-xl bg-muted/50 p-3.5">
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Script</p>
+              <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-foreground/80">
                 {suggestion.script}
               </p>
             </div>

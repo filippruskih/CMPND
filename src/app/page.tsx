@@ -37,7 +37,7 @@ export default async function OverviewPage() {
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div
-        className="relative overflow-hidden rounded-2xl px-6 py-7 text-white shadow-sm sm:px-8"
+        className="relative overflow-hidden rounded-3xl px-6 py-8 text-white shadow-[0_20px_44px_-20px_rgba(10,20,10,0.55)] sm:px-8"
         style={{ background: "linear-gradient(120deg, oklch(0.24 0.015 145), oklch(0.145 0.012 145))" }}
       >
         <Sparkles className="pointer-events-none absolute -top-6 right-6 size-32 text-white/10" />
@@ -52,7 +52,7 @@ export default async function OverviewPage() {
             day: "numeric",
           })}
         </p>
-        <h1 className="relative mt-1 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+        <h1 className="relative mt-1 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
           {account ? `Welcome back, @${account.username}` : "Welcome to CMPND"}
         </h1>
         <p className="relative mt-1.5 max-w-xl text-sm text-white/80 text-pretty">

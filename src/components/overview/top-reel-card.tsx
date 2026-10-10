@@ -20,18 +20,18 @@ export function TopReelCard({ reel }: { reel: ReelWithLatestInsight }) {
       <CardContent>
         <div className="flex gap-4">
           {reel.thumbnailUrl && (
-            <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
+            <div className="relative h-28 w-19 shrink-0 overflow-hidden rounded-xl bg-muted shadow-[0_6px_16px_-8px_rgba(20,20,10,0.3)]">
               <Image
                 src={reel.thumbnailUrl}
                 alt=""
                 fill
-                sizes="64px"
+                sizes="76px"
                 className="object-cover"
               />
             </div>
           )}
           <div className="flex flex-1 flex-col gap-2 min-w-0">
-            <p className="line-clamp-2 text-sm">{reel.caption ?? "No caption"}</p>
+            <p className="line-clamp-2 text-sm font-medium">{reel.caption ?? "No caption"}</p>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
               {insight?.views != null && <span>{formatCompactNumber(insight.views)} plays</span>}
               {insight?.engagementRate != null && (

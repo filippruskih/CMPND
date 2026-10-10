@@ -12,7 +12,7 @@ export function DailyReportCallout({ report }: { report: DailyReportView | null 
 
   return (
     <Link href="/reports">
-      <Card className="transition-colors hover:bg-muted/40">
+      <Card className="transition-all hover:-translate-y-0.5 hover:bg-muted/30">
         <CardContent className="flex items-center gap-3 py-3">
           <IconBadge icon={FileText} color="blue" size="sm" />
           <div className="flex-1 truncate">

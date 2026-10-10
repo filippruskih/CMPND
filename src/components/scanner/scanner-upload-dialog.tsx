@@ -30,7 +30,7 @@ export function ScannerUploadDialog() {
             type="button"
             aria-label="Scan a draft reel"
             onClick={() => setOpen(true)}
-            className="flex size-11 items-center justify-center rounded-full bg-foreground text-background transition-transform active:scale-95"
+            className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_6px_18px_-4px_var(--primary)] transition-transform active:scale-95"
           >
             <Plus className="size-6" strokeWidth={2.4} />
           </button>
